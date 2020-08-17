@@ -1,71 +1,100 @@
-﻿
-using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.UI;
 using BimExperts.Model;
 using BimExperts.ViewModels.ViewCommands;
 using System.Windows;
+using static BimExperts.Model.MagicRenumberHandler;
 
 namespace BimExperts.ViewModels
 {
     //Implementing controls for the MacigRenumber Ui
     public class MagicRenumberViewModel
-    { 
+    {
+        #region varDefs
+        
         private MagicRenumberHandler handler;
         private ExternalEvent exEvent;
+        private MagicRenumberLogic logic;
 
         public ReleyCommand uiLoadSystemElementsCommand { get; private set; }
         public ReleyCommand uiLoadSingleElementCommand { get; private set; }
         public ReleyCommand uiRunCommand { get; private set; }
 
+        #endregion
 
         public MagicRenumberViewModel()
         {
             // hooking up binding to the commands themselves
             // reley is jsut a generic for passing arguments along
             uiLoadSystemElementsCommand = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-            uiLoadSingleElementCommand = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-            uiRunCommand = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-
+            uiLoadSingleElementCommand  = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
+            uiRunCommand                = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
         }
+
         /// <summary>
         /// constructor for event
         /// </summary>
-        /// <param name="exEvent"></param>
-        /// <param name="handler"></param>
-        public MagicRenumberViewModel(ExternalEvent exEvent, MagicRenumberHandler handler)
+        /// <param name                 = "exEvent"></param>
+        /// <param name                 = "handler"></param>
+        public MagicRenumberViewModel(ExternalEvent exEvent, MagicRenumberHandler handler, MagicRenumberLogic logic)
         {
-
             //hooking up commands
-            uiLoadSystemElementsCommand = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-            uiLoadSingleElementCommand  = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-            uiRunCommand                = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
+            uiLoadSystemElementsCommand = new ReleyCommand(loadSystemElements, loadSystemCanUse);
+            uiLoadSingleElementCommand  = new ReleyCommand(loadOrigin, loadOriginCanUse);
+            uiRunCommand                = new ReleyCommand(runRenumbering, renumberingCanUe);
 
             //konsturktor za handler
-            this.handler = handler;
-            this.exEvent = exEvent;
-
-            
+            this.handler                = handler;
+            this.exEvent                = exEvent;
+            this.logic                  = logic;
         }
-        
-        public void DisplayMessageBox(object message)
+
+        #region buttonCommands
+
+        private void runRenumbering(object obj)
         {
-            MessageBox.Show("HARRO","trla baba lan");
+            handler.mode = selectionMode.Run;
+            exEvent.Raise();
+        }
+
+        private void loadOrigin(object obj)
+        {
+            handler.mode = selectionMode.One;
+            exEvent.Raise();
+        }
+
+        private void loadSystemElements(object obj)
+        {
+            handler.mode = selectionMode.All;
+            handler.logicData = logic;
             exEvent.Raise();
         }
 
 
-        public bool MessageBoxCanUse(object message)
+        //required bools for commands
+        private bool renumberingCanUe(object obj)
         {
             return true;
         }
 
-        public void getCurrentSelection(object message)
+        private bool loadOriginCanUse(object obj)
         {
-
-            exEvent.Raise();
-
+            return true;
         }
-      
-        public bool canUseGetCurrentSelection(object message)
+
+        private bool loadSystemCanUse(object obj)
+        {
+            return true;
+        }
+
+        #endregion buttonCommands
+
+        public void DisplayMessageBox(object message)
+        {
+            MessageBox.Show("HARRO", "trla baba lan");
+            exEvent.Raise();
+        }
+
+        public bool MessageBoxCanUse(object message)
         {
             return true;
         }

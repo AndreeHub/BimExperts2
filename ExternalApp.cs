@@ -84,11 +84,14 @@ namespace BimExperts
                 //External event for the dialog to use (to post requests)
                 ExternalEvent exEvent = ExternalEvent.Create(handler);
 
+                //create LogicClass for MagicRenumber
+
+                MagicRenumberLogic logic = new MagicRenumberLogic();
 
                 // We give the objects to the new dialog;
                 // The dialog becomes the owner responsible fore disposing them, eventual
 
-                mrVmod = new MagicRenumberViewModel(exEvent, handler);
+                mrVmod = new MagicRenumberViewModel(exEvent, handler, logic);
 
                 window = new MagicRenumber();
                 window.DataContext = mrVmod;
