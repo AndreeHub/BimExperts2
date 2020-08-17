@@ -58,6 +58,16 @@ namespace BimExperts.ViewModels
             return true;
         }
 
+        public void getCurrentSelection(object message)
+        {
+
+            exEvent.Raise();
+
+        }
       
+        public bool canUseGetCurrentSelection(object message)
+        {
+            return true;
+        }
     }
 }

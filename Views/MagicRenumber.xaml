@@ -30,8 +30,7 @@
                 HorizontalAlignment="Center"
                 Background="White"
                 Command="{Binding uiLoadSystemElementsCommand}"
-                Content="Load system elements"
-                    Click="Button_Click" />
+                Content="Load system elements"   />
         </StackPanel>
         <StackPanel>
             <TextBlock
