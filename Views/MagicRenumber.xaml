@@ -60,12 +60,7 @@
                 ItemsSource="{Binding  ParameterNames}"
                       SelectedItem="{Binding SelectedParamName}">
                 
-                <ComboBox.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Offset="0" Color="#FFF0F0F0" />
-                        <GradientStop Offset="1" Color="White" />
-                    </LinearGradientBrush>
-                </ComboBox.Background>
+
             </ComboBox>
         </StackPanel>
         <TextBlock

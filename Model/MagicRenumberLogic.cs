@@ -2,6 +2,7 @@
 using Autodesk.Revit.UI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static BimExperts.Model.MagicRenumberHandler;
 
 namespace BimExperts.Model
@@ -21,6 +22,7 @@ namespace BimExperts.Model
         public List<Element> elementsForRenumbering = new List<Element>();
 
         public HashSet<string> commonParameters = new HashSet<string>();
+        private string selectedParaName;
 
         //Set Revit top level data
         public void setRevitApp(UIApplication app)
@@ -92,6 +94,14 @@ namespace BimExperts.Model
                 elementsForRenumbering.Add(Doc.GetElement(eleId));
             }
         }
+        public List<String> returnParamList()
+        {
+            return commonParameters.ToList();
+        }
 
+        public void setSelectedParamter(string name)
+        {
+            selectedParaName = name;
+        }
     }
 }

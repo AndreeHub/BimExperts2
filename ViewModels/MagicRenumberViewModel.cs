@@ -3,12 +3,13 @@ using BimExperts.Model;
 using BimExperts.ViewModels.ViewCommands;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Documents;
 using static BimExperts.Model.MagicRenumberHandler;
 
 namespace BimExperts.ViewModels
 {
     //Implementing controls for the MacigRenumber Ui
-    public class MagicRenumberViewModel
+    public class MagicRenumberViewModel : ViewModelBase
     {
         #region varDefs
         
@@ -20,11 +21,12 @@ namespace BimExperts.ViewModels
         public ReleyCommand uiLoadSingleElementCommand { get; private set; }
         public ReleyCommand uiRunCommand { get; private set; }
 
-        private ObservableCollection<string> _parameterNames = new ObservableCollection<string>();
+        //for the comboBox selection
+        private ObservableCollection<string> _parameterNames;
         public ObservableCollection<string> ParameterNames
         {
             get { return _parameterNames; }
-            set { _parameterNames = value;}
+            set { _parameterNames = value; OnPropertyChanged("ParameterNames"); }
         }
 
         private string _selectedParamName;
@@ -73,8 +75,10 @@ namespace BimExperts.ViewModels
 
         private void loadOrigin(object obj)
         {
+            ParameterNames = new ObservableCollection<string>(logic.returnParamList());
             handler.mode = selectionMode.One;
             exEvent.Raise();
+
         }
 
         private void loadSystemElements(object obj)
