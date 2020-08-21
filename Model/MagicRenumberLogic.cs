@@ -18,9 +18,9 @@ namespace BimExperts.Model
         public ICollection<ElementId> unorderedElementIds = null;
         public ICollection<ElementId> renumberingOrigin = null;
 
-        public ICollection<Element> elementsForRenumbering = null;
+        public List<Element> elementsForRenumbering = new List<Element>();
 
-        public HashSet<string> commonParameters = null;
+        public HashSet<string> commonParameters = new HashSet<string>();
 
         //Set Revit top level data
         public void setRevitApp(UIApplication app)
@@ -35,26 +35,19 @@ namespace BimExperts.Model
         public void selectionControler(selectionMode sel, UIApplication app)
         {
             if (sel == selectionMode.One)
-                getCurrentSelection(renumberingOrigin);
+                renumberingOrigin =getCurrentSelection();
             else if (sel == selectionMode.All)
             {
-                getCurrentSelection(unorderedElementIds);
-                foreach (var item in unorderedElementIds)
-                {
-                    elementsForRenumbering.Add(Doc.GetElement(item));
-                }
-
+                unorderedElementIds = getCurrentSelection();
                 getCommonParameters();
             }
             else if (sel == selectionMode.Run)
                 Run();
         }
-
-
         //gets the current selection
-        private void getCurrentSelection(ICollection<ElementId> idCollection)
+        private ICollection<ElementId> getCurrentSelection()
         {
-            idCollection = UiDoc.Selection.GetElementIds();
+            return UiDoc.Selection.GetElementIds();
         }
         //run the renumbering logic
         private void Run()

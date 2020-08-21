@@ -40,9 +40,9 @@ namespace BimExperts.ViewModels
         {
             // hooking up binding to the commands themselves
             // reley is jsut a generic for passing arguments along
-            uiLoadSystemElementsCommand = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-            uiLoadSingleElementCommand  = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-            uiRunCommand                = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
+            //uiLoadSystemElementsCommand = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
+            //uiLoadSingleElementCommand  = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
+            //uiRunCommand                = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
         }
 
         /// <summary>
