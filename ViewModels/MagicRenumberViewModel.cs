@@ -1,6 +1,7 @@
 ﻿using Autodesk.Revit.UI;
 using BimExperts.Model;
 using BimExperts.ViewModels.ViewCommands;
+using System.Collections.ObjectModel;
 using System.Windows;
 using static BimExperts.Model.MagicRenumberHandler;
 
@@ -18,6 +19,20 @@ namespace BimExperts.ViewModels
         public ReleyCommand uiLoadSystemElementsCommand { get; private set; }
         public ReleyCommand uiLoadSingleElementCommand { get; private set; }
         public ReleyCommand uiRunCommand { get; private set; }
+
+        private ObservableCollection<string> _parameterNames = new ObservableCollection<string>();
+        public ObservableCollection<string> ParameterNames
+        {
+            get { return _parameterNames; }
+            set { _parameterNames = value;}
+        }
+
+        private string _selectedParamName;
+        public string SelectedParamName
+        {
+            get { return _selectedParamName; }
+            set { _selectedParamName = value; }
+        }
 
         #endregion
 
@@ -68,8 +83,6 @@ namespace BimExperts.ViewModels
             handler.logicData = logic;
             exEvent.Raise();
         }
-
-
         //required bools for commands
         private bool renumberingCanUe(object obj)
         {

@@ -38,13 +38,6 @@ namespace BimExperts.Model
 
 
         }
-        /// <summary>
-        /// This function places the current selection in the appropriate variable in the logic class based on th eneum
-        /// </summary>
-        /// <param name="sel"></param>
-    
-
-       
      
         public string GetName()
         {

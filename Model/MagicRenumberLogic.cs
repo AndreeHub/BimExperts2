@@ -1,5 +1,6 @@
 ﻿using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using System;
 using System.Collections.Generic;
 using static BimExperts.Model.MagicRenumberHandler;
 
@@ -13,13 +14,13 @@ namespace BimExperts.Model
         private UIDocument UiDoc = null;
         private Document Doc = null;
 
-
         //data storage
-        public ICollection<ElementId> elementsForRenumbering = null;
+        public ICollection<ElementId> unorderedElementIds = null;
         public ICollection<ElementId> renumberingOrigin = null;
 
-        public ICollection<Element> elementsForRe = null
-        public List<string> parameterNames = null;
+        public ICollection<Element> elementsForRenumbering = null;
+
+        public HashSet<string> commonParameters = null;
 
         //Set Revit top level data
         public void setRevitApp(UIApplication app)
@@ -30,42 +31,74 @@ namespace BimExperts.Model
             Doc = UiDoc.Document;
         }
 
-        //Chose w
+        //get and assign selection from Revit based on Mode
         public void selectionControler(selectionMode sel, UIApplication app)
         {
             if (sel == selectionMode.One)
-                getCurrentSelection(UiDoc,renumberingOrigin);
+                getCurrentSelection(renumberingOrigin);
             else if (sel == selectionMode.All)
             {
-                getCurrentSelection(UiDoc,elementsForRenumbering);
-                foreach (var item in elementsForRenumbering)
+                getCurrentSelection(unorderedElementIds);
+                foreach (var item in unorderedElementIds)
                 {
-                    elementsForRe.Add(Doc.GetElement(item));
+                    elementsForRenumbering.Add(Doc.GetElement(item));
                 }
 
-                getParameters();
+                getCommonParameters();
             }
             else if (sel == selectionMode.Run)
                 Run();
+        }
+
+
+        //gets the current selection
+        private void getCurrentSelection(ICollection<ElementId> idCollection)
+        {
+            idCollection = UiDoc.Selection.GetElementIds();
+        }
+        //run the renumbering logic
+        private void Run()
+        {
+            throw new NotImplementedException();
         }
 
         internal void Run(UIApplication app)
         {
         }
 
-        private void getParameters()
+        //find all the common parameters in the elements set, used for combobox form
+        private void getCommonParameters()
         {
-            foreach (var item in elementsForRenumbering)
+            getElementsFromIds();
+            populateListWithParameterNames();
+
+        }
+
+        private void populateListWithParameterNames()
+        {
+            foreach (var ele in elementsForRenumbering)
             {
-                elementsForRe.Add(Doc.GetElement(item));
+                foreach (var para in ele.ParametersMap)
+                {
+                    //TODO add a check to see if the current parameters are contained\
+                    Parameter Param = (para as Parameter);
+                    if (Param.StorageType == StorageType.String)
+                    {
+                        var paraName = Param.Definition.Name;
+                        commonParameters.Add(paraName);
+
+                    }
+                }
             }
-
         }
 
-        //gets the current selection
-        public void getCurrentSelection(UIDocument uiDoc, ICollection<ElementId> idCollection)
+        private void getElementsFromIds()
         {
-            idCollection = uiDoc.Selection.GetElementIds();
+            foreach (var eleId in unorderedElementIds)
+            {
+                elementsForRenumbering.Add(Doc.GetElement(eleId));
+            }
         }
+
     }
 }
