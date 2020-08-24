@@ -16,7 +16,7 @@ namespace BimExperts.ViewModels
         private MagicRenumberHandler handler;
         private ExternalEvent exEvent;
         private MagicRenumberLogic logic;
-
+        //command for button triggers
         public ReleyCommand uiLoadSystemElementsCommand { get; private set; }
         public ReleyCommand uiLoadSingleElementCommand { get; private set; }
         public ReleyCommand uiRunCommand { get; private set; }
@@ -34,6 +34,13 @@ namespace BimExperts.ViewModels
         {
             get { return _selectedParamName; }
             set { _selectedParamName = value; }
+        }
+        
+        private string _startingStringEntry;
+        public string StartingStringEntry
+        {
+            get { return _startingStringEntry; }
+            set { SetProperty(ref _startingStringEntry, value); }
         }
 
         #endregion
@@ -67,9 +74,11 @@ namespace BimExperts.ViewModels
 
         #region buttonCommands
 
+        //get the entry from the textbox
         private void runRenumbering(object obj)
         {
             handler.mode = selectionMode.Run;
+            logic.setSelectedParamter(_startingStringEntry);
             exEvent.Raise();
         }
 
