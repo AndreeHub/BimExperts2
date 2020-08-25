@@ -28,7 +28,7 @@
                 HorizontalAlignment="Center"
                 Background="White"
                 Command="{Binding uiLoadSystemElementsCommand}"
-                Content="Load system elements"   />
+                Content="Load system elements" />
         </StackPanel>
         <StackPanel>
             <TextBlock
@@ -87,12 +87,11 @@
                 Content="Run" />
         </StackPanel>
         <StackPanel>
-            <TextBlock
-                Margin="15,5,20,15"
-                Foreground="Black"
-                Text="Note: Selection should be made by selecting first element in a system, then mouseovering over the last desired element, then pressing tab + left mouse click"
-                TextAlignment="Center"
-                TextWrapping="Wrap" />
+            <TextBlock Margin="15,5,20,15"
+                       Foreground="Black"
+                       Text="Note: Selection should be made by selecting first element in a system, then mouseovering over the last desired element, then pressing tab + left mouse click"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap" />
         </StackPanel>
     </StackPanel>
 </Window>

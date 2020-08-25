@@ -1,6 +1,4 @@
-﻿using Autodesk.Revit.DB.Structure;
-using Autodesk.Revit.UI;
-using Autodesk.Revit.UI.Events;
+﻿using Autodesk.Revit.UI;
 using BimExperts.Model;
 using BimExperts.ViewModels;
 using BimExperts.Views;
@@ -14,13 +12,12 @@ namespace BimExperts
 
     {
         internal static ExternalApp thisApp = null;
-       
+
         private MagicRenumberViewModel mrVmod;
         private MagicRenumber window;
 
         public Result OnShutdown(UIControlledApplication application)
         {
-           
             return Result.Succeeded;
         }
 
@@ -30,6 +27,7 @@ namespace BimExperts
             thisApp = this;
 
             System.Diagnostics.Debugger.Launch();
+
             #region Image and buttons
 
             //add images
@@ -56,8 +54,8 @@ namespace BimExperts
             MeasureAndCountData.LargeImage = MeasureAndCountImage;
             TransitionData.LargeImage = TransitionImage;
             ChangeHosteLevelData.LargeImage = ChangeHostedLevelImage;
-            #endregion
 
+            #endregion Image and buttons
 
             //Add buttons to ribbon
             application.CreateRibbonTab("BimExperts");
@@ -68,10 +66,9 @@ namespace BimExperts
             panel.AddItem(TransitionData);
             panel.AddItem(ChangeHosteLevelData);
 
-
-
             return Result.Succeeded;
         }
+
         //this method creates and shows a modeless dialog, unells it alreay exists
         public void ShowWindow(UIApplication uiapp)
         {
@@ -97,9 +94,7 @@ namespace BimExperts
                 window.DataContext = mrVmod;
 
                 window.Show();
-
             }
         }
-
-    }       
+    }
 }

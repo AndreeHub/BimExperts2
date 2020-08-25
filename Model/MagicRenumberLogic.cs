@@ -22,16 +22,18 @@ namespace BimExperts.Model
 
         //input vars
         public ICollection<ElementId> unorderedElementIds = null;
+
         public ICollection<ElementId> renumberingOrigin = null;
-        private string selectedParaName;
+        private string selectedPara;
+        private string startNumber;
 
         //work vars
         private Element Origin = null;
+
         public List<Element> elementsForRenumbering = new List<Element>();
         public List<int> elementsForRenumberingCheckList = new List<int>();
-        List<Element> orderedElements = new List<Element>();
+        private List<Element> orderedElements = new List<Element>();
         public HashSet<string> commonParameters = new HashSet<string>();
-        
 
         #endregion Fields
 
@@ -57,7 +59,9 @@ namespace BimExperts.Model
                 getCommonParameters();
             }
             else if (sel == selectionMode.Run)
+            {
                 Run();
+            }
         }
 
         #endregion Constructor and Controler
@@ -67,32 +71,33 @@ namespace BimExperts.Model
         //run the renumbering logic
         private void Run()
         {
-            /*starting form the first element, get its connector and determine
-              which one pointsi in the direction of the other elements by checking
-            if its in the selection of all elements.
-            When you have the connector, call a function that is going to recursivly go
-            through each element, get its connectors, then call itself on those connectors
-            */
             //get first element from ID
             getOriginElement(renumberingOrigin);
             //pop his ass from the list for easier orientation
             elementsForRenumberingCheckList.Remove(Origin.Id.IntegerValue);
             //get the connector pointing to the selection
             ConnectorSet originConnectors = GetConnectors(Origin);
-            orderedElements.Add(Origin);//add starting element
-            Element temp = null;
             traverseSystem(Origin);
-            
+            setParamters();
         }
+
+        #endregion renumberingLogic
+
+        #region RunHelpers
 
         private void traverseSystem(Element ele)
         {
+            if (isFinalElement())
+            {
+                orderedElements.Add(ele);
+                return;
+            }
             elementsForRenumberingCheckList.Remove(ele.Id.IntegerValue); // remove from check list
             orderedElements.Add(ele);
             List<Element> nextEles = null;
             //get the connecting elements
             nextEles = getConnectingElements(ele);
-            //check if the element is in the list
+            //check if the element is in the list, if yes that means hes next one to be visited
             foreach (Element el in nextEles)
             {
                 if (isElementInSelection(el))
@@ -100,8 +105,23 @@ namespace BimExperts.Model
                     traverseSystem(el);
                 }
             }
+        }
 
-            
+
+        private void setParamters()
+        {
+            //1.get the starting number from input string
+            int startNum = int.Parse(startNumber);
+            foreach (Element ele in orderedElements)
+            {
+                ele.LookupParameter(selectedPara).Set(startNum.ToString());
+                startNum++;
+            }
+        }
+
+        private bool isFinalElement()
+        {
+            if (elementsForRenumberingCheckList.Count == 1) return true; return false;
         }
 
         private bool isElementInSelection(Element el)
@@ -109,32 +129,26 @@ namespace BimExperts.Model
             if (elementsForRenumberingCheckList.Contains(el.Id.IntegerValue)) return true; return false;
         }
 
-
-        #endregion renumberingLogic
-
-        #region RunHelpers
-
         private List<Element> getConnectingElements(Element ele)
         {
-            List<Element> eles = new List<Element>();
-            ConnectorSet cons = GetConnectors(ele);
+            List<Element> eles   = new List<Element>();
+            ConnectorSet cons    = GetConnectors(ele);
             foreach (Connector con in cons)
             {
                 Element neigbour = getNeighbour(con);
                 if (neigbour != null)
                     eles.Add(neigbour);
-
             }
             return eles;
         }
 
         private Element getNeighbour(Connector con)
         {
-            // this should return the neigbour 
+            // this should return the neigbour
             ConnectorSet allConnections = con.AllRefs;
             foreach (Connector co in allConnections)
             {
-                if (!doesConnectorHaveTheSameOwnerAsCaller(con,co))
+                if (!doesConnectorHaveTheSameOwnerAsCaller(con, co))
                 {
                     return co.Owner;
                 }
@@ -145,13 +159,13 @@ namespace BimExperts.Model
         private bool doesConnectorHaveTheSameOwnerAsCaller(Connector con, Connector item)
         {
             //TODO create extension methods of Element class that returns id integer value
-            if (con.Owner.Id.IntegerValue == item.Owner.Id.IntegerValue) return true; return false; 
+            if (con.Owner.Id.IntegerValue == item.Owner.Id.IntegerValue) return true; return false;
         }
 
         private bool isConnectorOwnerInCheckList(Connector con)
         {
             if (elementsForRenumberingCheckList.Contains(con.Owner.Id.IntegerValue))
-            return true;
+                return true;
             else return false;
         }
 
@@ -169,7 +183,7 @@ namespace BimExperts.Model
 
             if (e is FamilyInstance)
             {
-                MEPModel m = ((FamilyInstance)e).MEPModel;
+                MEPModel m     = ((FamilyInstance)e).MEPModel;
 
                 if (null != m
                   && null != m.ConnectorManager)
@@ -199,6 +213,16 @@ namespace BimExperts.Model
             return connectors;
         }
 
+        internal void setStartinParameterNumber(string str)
+        {
+            selectedPara = str;
+        }
+
+        internal void setStartingParameterName(string str)
+        {
+            startNumber = str;
+        }
+
         #endregion RunHelpers
 
         #region RevitsLittleHelpers
@@ -217,9 +241,9 @@ namespace BimExperts.Model
             return commonParameters.ToList();
         }
 
-        public void setSelectedParamter(string name)
+        public void setStartingParameter(string name)
         {
-            selectedParaName = name;
+            selectedPara = name;
         }
 
         private ICollection<ElementId> getCurrentSelection()

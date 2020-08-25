@@ -3,7 +3,6 @@ using BimExperts.Model;
 using BimExperts.ViewModels.ViewCommands;
 using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Documents;
 using static BimExperts.Model.MagicRenumberHandler;
 
 namespace BimExperts.ViewModels
@@ -12,17 +11,20 @@ namespace BimExperts.ViewModels
     public class MagicRenumberViewModel : ViewModelBase
     {
         #region varDefs
-        
+
         private MagicRenumberHandler handler;
         private ExternalEvent exEvent;
         private MagicRenumberLogic logic;
+
         //command for button triggers
         public ReleyCommand uiLoadSystemElementsCommand { get; private set; }
+
         public ReleyCommand uiLoadSingleElementCommand { get; private set; }
         public ReleyCommand uiRunCommand { get; private set; }
 
         //for the comboBox selection
         private ObservableCollection<string> _parameterNames;
+
         public ObservableCollection<string> ParameterNames
         {
             get { return _parameterNames; }
@@ -30,20 +32,22 @@ namespace BimExperts.ViewModels
         }
 
         private string _selectedParamName;
+
         public string SelectedParamName
         {
             get { return _selectedParamName; }
             set { _selectedParamName = value; }
         }
-        
+
         private string _startingStringEntry;
+
         public string StartingStringEntry
         {
             get { return _startingStringEntry; }
             set { SetProperty(ref _startingStringEntry, value); }
         }
 
-        #endregion
+        #endregion varDefs
 
         public MagicRenumberViewModel()
         {
@@ -63,13 +67,13 @@ namespace BimExperts.ViewModels
         {
             //hooking up commands
             uiLoadSystemElementsCommand = new ReleyCommand(loadSystemElements, loadSystemCanUse);
-            uiLoadSingleElementCommand  = new ReleyCommand(loadOrigin, loadOriginCanUse);
-            uiRunCommand                = new ReleyCommand(runRenumbering, renumberingCanUe);
+            uiLoadSingleElementCommand = new ReleyCommand(loadOrigin, loadOriginCanUse);
+            uiRunCommand = new ReleyCommand(runRenumbering, renumberingCanUe);
 
             //konsturktor za handler
-            this.handler                = handler;
-            this.exEvent                = exEvent;
-            this.logic                  = logic;
+            this.handler = handler;
+            this.exEvent = exEvent;
+            this.logic = logic;
         }
 
         #region buttonCommands
@@ -78,7 +82,8 @@ namespace BimExperts.ViewModels
         private void runRenumbering(object obj)
         {
             handler.mode = selectionMode.Run;
-            logic.setSelectedParamter(_startingStringEntry);
+            logic.setStartingParameterName(_selectedParamName);
+            logic.setStartinParameterNumber(_startingStringEntry);
             exEvent.Raise();
         }
 
@@ -87,7 +92,6 @@ namespace BimExperts.ViewModels
             ParameterNames = new ObservableCollection<string>(logic.returnParamList());
             handler.mode = selectionMode.One;
             exEvent.Raise();
-
         }
 
         private void loadSystemElements(object obj)
@@ -96,6 +100,7 @@ namespace BimExperts.ViewModels
             handler.logicData = logic;
             exEvent.Raise();
         }
+
         //required bools for commands
         private bool renumberingCanUe(object obj)
         {
