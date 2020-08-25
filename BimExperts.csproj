@@ -98,9 +98,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CreateTransition.cs" />
+    <Compile Include="Commands\StartMagicRenumber.cs" />
     <Compile Include="Model\MagicRenumberSystemElementNodecs.cs" />
     <Compile Include="MVVMBase.cs" />
-    <Compile Include="MagicRenumber.cs" />
     <Compile Include="Model\MagicRenumberLogic.cs" />
     <Compile Include="Model\MagicRenumberHandler.cs" />
     <Compile Include="TestCommand.cs" />

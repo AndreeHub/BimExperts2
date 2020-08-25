@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using static BimExperts.Model.MagicRenumberHandler;
 
 namespace BimExperts.Model
@@ -105,18 +106,32 @@ namespace BimExperts.Model
                     traverseSystem(el);
                 }
             }
+
         }
 
 
         private void setParamters()
         {
             //1.get the starting number from input string
-            int startNum = int.Parse(startNumber);
-            foreach (Element ele in orderedElements)
+            int num = int.Parse(startNumber);
+            string val;
+            Parameter pa;
+            using (Transaction trans = new Transaction(Doc, "Set params"))
             {
-                ele.LookupParameter(selectedPara).Set(startNum.ToString());
-                startNum++;
+                trans.Start();
+
+                foreach (Element ele in orderedElements)
+                {
+                    val = num.ToString();
+                    pa = ele.LookupParameter(selectedPara);
+                    pa.Set(val);
+                    num++;
+                }
+
+                trans.Commit();
+
             }
+                
         }
 
         private bool isFinalElement()
@@ -215,12 +230,12 @@ namespace BimExperts.Model
 
         internal void setStartinParameterNumber(string str)
         {
-            selectedPara = str;
+            startNumber = str;
         }
 
         internal void setStartingParameterName(string str)
         {
-            startNumber = str;
+            selectedPara = str;
         }
 
         #endregion RunHelpers

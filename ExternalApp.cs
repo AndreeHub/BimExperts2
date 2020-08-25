@@ -48,7 +48,7 @@ namespace BimExperts
             PushButtonData InfoData = new PushButtonData("Info", "Hello", AssemblyPath, "BimExperts.TestCommand");
             PushButtonData MeasureAndCountData = new PushButtonData("Measure and Count", "Hello", AssemblyPath, "BimExperts.TestCommand");
             PushButtonData TransitionData = new PushButtonData("Magic Transition", "Magic Transition", AssemblyPath, "BimExperts.CreateTransition");
-            PushButtonData ChangeHosteLevelData = new PushButtonData("Change Hosted Level", "Hello", AssemblyPath, "BimExperts.TestCommand");
+            PushButtonData ChangeHosteLevelData = new PushButtonData("Change Hosted Level", "Magic Renumber", AssemblyPath, "BimExperts.StartMagicRenumber");
 
             InfoData.LargeImage = InfoImage;
             MeasureAndCountData.LargeImage = MeasureAndCountImage;

@@ -15,7 +15,7 @@ namespace BimExperts
         {
             TaskDialog.Show("Test Command Window", "Greeting from the other side");
             //win.Show();
-            ExternalApp.thisApp.ShowWindow(commandData.Application);
+            
 
             return Result.Succeeded;
         }

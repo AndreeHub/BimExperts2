@@ -30,7 +30,7 @@ namespace BimExperts.ViewModels.ViewCommands
         public bool CanExecute(object parameter)
 
         {
-            return _canExecute == null ? true : _canExecute(parameter);
+            return _canExecute == null || _canExecute(parameter);
         }
 
         public void Execute(object parameter)
