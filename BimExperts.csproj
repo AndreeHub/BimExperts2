@@ -98,18 +98,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CreateTransition.cs" />
+    <Compile Include="Commands\MeasureAndCountComm.cs" />
     <Compile Include="Commands\StartMagicRenumber.cs" />
     <Compile Include="Model\MagicRenumberSystemElementNodecs.cs" />
-    <Compile Include="MVVMBase.cs" />
+    <Compile Include="ViewModelBase.cs" />
     <Compile Include="Model\MagicRenumberLogic.cs" />
     <Compile Include="Model\MagicRenumberHandler.cs" />
     <Compile Include="TestCommand.cs" />
     <Compile Include="ExternalApp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\MagicRenumberViewModel.cs" />
+    <Compile Include="ViewModels\MeasureAndCountViewModel.cs" />
     <Compile Include="ViewModels\ViewCommands\ReleyCommand.cs" />
     <Compile Include="Views\MagicRenumber.cs">
       <DependentUpon>MagicRenumber.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MeasureAndCount.xaml.cs">
+      <DependentUpon>MeasureAndCount.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +137,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MeasureAndCount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Magic Renumber.png" />
@@ -139,6 +148,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Measure and count.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\bimexperts.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

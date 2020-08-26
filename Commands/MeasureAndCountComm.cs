@@ -3,14 +3,15 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.DB.Mechanical;
 using Autodesk.Revit.UI;
 using System.Collections.Generic;
-namespace BimExperts
+
+namespace BimExperts.Commands
 {
     [Transaction(TransactionMode.Manual)]
-    internal class StartMagicRenumber : IExternalCommand
+    class MeasureAndCountComm:IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            ExternalApp.thisApp.ShowWindowMagicrenumber(commandData.Application);
+            ExternalApp.thisApp.ShowMeasureAndCount(commandData.Application);
             return Result.Succeeded;
         }
     }

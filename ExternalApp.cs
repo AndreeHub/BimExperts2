@@ -11,11 +11,21 @@ namespace BimExperts
     public class ExternalApp : IExternalApplication
 
     {
+        #region Vars
+
         internal static ExternalApp thisApp = null;
 
+        //Magic Renumber
         private MagicRenumberViewModel mrVmod;
-        private MagicRenumber window;
+        private MeasureAndCountViewModel macVmod;
 
+        //Measure and count
+        private MagicRenumber windowMagicRenumber;
+        private MeasureAndCount windowMeasureAndCount;
+
+        #endregion Vars
+
+        #region InterfaceMethods  
         public Result OnShutdown(UIControlledApplication application)
         {
             return Result.Succeeded;
@@ -23,8 +33,11 @@ namespace BimExperts
 
         public Result OnStartup(UIControlledApplication application)
         {
-            window = null;
-            thisApp = this;
+            //preping window vairables
+            windowMagicRenumber   = null;
+            windowMeasureAndCount = null;
+
+            thisApp               = this;
 
             System.Diagnostics.Debugger.Launch();
 
@@ -68,33 +81,58 @@ namespace BimExperts
 
             return Result.Succeeded;
         }
+        #endregion
 
-        //this method creates and shows a modeless dialog, unells it alreay exists
-        public void ShowWindow(UIApplication uiapp)
+        #region MagicRenumberIni
+
+        public void ShowWindowMagicrenumber(UIApplication uiapp)
         {
             //if we do not have a dialoge yet, create it
-            if (window == null)
+            if (windowMagicRenumber == null)
             {
                 //A new handeler to handle request posting by the dialog
-                MagicRenumberHandler handler = new MagicRenumberHandler();
+                MagicRenumberHandler handler    = new MagicRenumberHandler();
 
                 //External event for the dialog to use (to post requests)
-                ExternalEvent exEvent = ExternalEvent.Create(handler);
+                ExternalEvent exEvent           = ExternalEvent.Create(handler);
 
                 //create LogicClass for MagicRenumber
 
-                MagicRenumberLogic logic = new MagicRenumberLogic();
+                MagicRenumberLogic logic        = new MagicRenumberLogic();
 
                 // We give the objects to the new dialog;
                 // The dialog becomes the owner responsible fore disposing them, eventual
 
-                mrVmod = new MagicRenumberViewModel(exEvent, handler, logic);
+                mrVmod                          = new MagicRenumberViewModel(exEvent, handler, logic);
 
-                window = new MagicRenumber();
-                window.DataContext = mrVmod;
+                windowMagicRenumber             = new MagicRenumber();
+                windowMagicRenumber.DataContext = mrVmod;
 
-                window.Show();
+                windowMagicRenumber.Show();
             }
         }
+
+        #endregion MagicRenumberIni
+
+        #region MeasureAndCountINI
+
+        public void ShowMeasureAndCount(UIApplication uiapp)
+        {
+            if (windowMeasureAndCount == null)
+            {
+                windowMeasureAndCount             = new MeasureAndCount();
+                macVmod                           = new MeasureAndCountViewModel(windowMeasureAndCount);
+                windowMeasureAndCount.DataContext = macVmod;
+
+                windowMeasureAndCount.Show();
+            }
+
+            if(windowMeasureAndCount != null)
+            {
+                windowMeasureAndCount.Close();
+            }
+        }
+
+        #endregion MeasureAndCountINI
     }
 }

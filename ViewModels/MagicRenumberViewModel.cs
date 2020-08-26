@@ -48,16 +48,7 @@ namespace BimExperts.ViewModels
         }
 
         #endregion varDefs
-
-        public MagicRenumberViewModel()
-        {
-            // hooking up binding to the commands themselves
-            // reley is jsut a generic for passing arguments along
-            //uiLoadSystemElementsCommand = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-            //uiLoadSingleElementCommand  = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-            //uiRunCommand                = new ReleyCommand(DisplayMessageBox, MessageBoxCanUse);
-        }
-
+        #region Constructor
         /// <summary>
         /// constructor for event
         /// </summary>
@@ -67,14 +58,16 @@ namespace BimExperts.ViewModels
         {
             //hooking up commands
             uiLoadSystemElementsCommand = new ReleyCommand(loadSystemElements, loadSystemCanUse);
-            uiLoadSingleElementCommand = new ReleyCommand(loadOrigin, loadOriginCanUse);
-            uiRunCommand = new ReleyCommand(runRenumbering, renumberingCanUe);
+            uiLoadSingleElementCommand  = new ReleyCommand(loadOrigin, loadOriginCanUse);
+            uiRunCommand                = new ReleyCommand(runRenumbering, renumberingCanUe);
 
             //konsturktor za handler
             this.handler = handler;
             this.exEvent = exEvent;
-            this.logic = logic;
+            this.logic   = logic;
         }
+
+        #endregion
 
         #region buttonCommands
 
@@ -119,6 +112,7 @@ namespace BimExperts.ViewModels
 
         #endregion buttonCommands
 
+        #region TestingCode
         public void DisplayMessageBox(object message)
         {
             MessageBox.Show("HARRO", "trla baba lan");
@@ -129,5 +123,7 @@ namespace BimExperts.ViewModels
         {
             return true;
         }
+
+        #endregion
     }
 }
