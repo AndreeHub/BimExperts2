@@ -135,11 +135,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Magic Renumber.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Magic Transition.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Measure and count.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)"."" "$(AppData)\Autodesk\Revit\Addins\2019\"

@@ -32,7 +32,7 @@ namespace BimExperts
 
             //add images
             Uri InfoImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/bim32x32.png");
-            Uri MeasureAndCountImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/bim32x32_1.png");
+            Uri MeasureAndCountImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/Measure and count.png");
             Uri TransitionImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/Magic Transition.png");
             Uri MagicTransition = new Uri("pack://application:,,,/BimExperts;component/Resources/Magic Renumber.png");
             //Create Bitmap image
@@ -46,9 +46,9 @@ namespace BimExperts
             string AssemblyPath = Assembly.GetExecutingAssembly().Location;
 
             PushButtonData InfoData = new PushButtonData("Info", "Hello", AssemblyPath, "BimExperts.TestCommand");
-            PushButtonData MeasureAndCountData = new PushButtonData("Measure and Count", "Hello", AssemblyPath, "BimExperts.TestCommand");
-            PushButtonData TransitionData = new PushButtonData("Magic Transition", "Magic Transition", AssemblyPath, "BimExperts.CreateTransition");
-            PushButtonData ChangeHosteLevelData = new PushButtonData("Change Hosted Level", "Magic Renumber", AssemblyPath, "BimExperts.StartMagicRenumber");
+            PushButtonData MeasureAndCountData = new PushButtonData("Measure and Count", "Measure \n and Count", AssemblyPath, "BimExperts.TestCommand");
+            PushButtonData TransitionData = new PushButtonData("Magic Transition", "Magic \n Transition", AssemblyPath, "BimExperts.CreateTransition");
+            PushButtonData ChangeHosteLevelData = new PushButtonData("Change Hosted Level", "Magic \n Renumber", AssemblyPath, "BimExperts.StartMagicRenumber");
 
             InfoData.LargeImage = InfoImage;
             MeasureAndCountData.LargeImage = MeasureAndCountImage;
@@ -59,7 +59,7 @@ namespace BimExperts
 
             //Add buttons to ribbon
             application.CreateRibbonTab("BimExperts");
-            RibbonPanel panel = application.CreateRibbonPanel("BimExperts", "Commands");
+            RibbonPanel panel = application.CreateRibbonPanel("BimExperts", "Tool Box");
 
             panel.AddItem(InfoData);
             panel.AddItem(MeasureAndCountData);

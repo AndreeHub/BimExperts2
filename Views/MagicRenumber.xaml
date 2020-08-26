@@ -11,6 +11,7 @@
         BorderBrush="Black"
         ResizeMode="NoResize"
         mc:Ignorable="d"
+        Title="Magic Renumber"
         Topmost="True">
     <StackPanel>
         <StackPanel>

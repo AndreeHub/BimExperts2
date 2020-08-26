@@ -80,6 +80,12 @@ namespace BimExperts.Model
             ConnectorSet originConnectors = GetConnectors(Origin);
             traverseSystem(Origin);
             setParamters();
+            resetList();
+        }
+
+        private void resetList()
+        {
+            orderedElements.Clear();
         }
 
         #endregion renumberingLogic
