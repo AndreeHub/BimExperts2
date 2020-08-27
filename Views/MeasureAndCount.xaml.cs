@@ -18,7 +18,7 @@ namespace BimExperts.Views
     /// <summary>
     /// Interaction logic for MeasureAndCount.xaml
     /// </summary>
-    public partial class MeasureAndCount : Window,IDisposable
+    public partial class MeasureAndCount : Window, IDisposable
     {
         public MeasureAndCount()
         {

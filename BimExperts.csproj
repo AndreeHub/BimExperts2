@@ -101,6 +101,7 @@
     <Compile Include="Commands\MeasureAndCountComm.cs" />
     <Compile Include="Commands\StartMagicRenumber.cs" />
     <Compile Include="Model\MagicRenumberSystemElementNodecs.cs" />
+    <Compile Include="Model\MeasureAndCountLogic.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Compile Include="Model\MagicRenumberLogic.cs" />
     <Compile Include="Model\MagicRenumberHandler.cs" />
@@ -118,11 +119,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="BimExperts.addin">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\bim32x32.png" />

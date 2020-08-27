@@ -18,7 +18,6 @@ namespace BimExperts.ViewModels
 
         //command for button triggers
         public ReleyCommand uiLoadSystemElementsCommand { get; private set; }
-
         public ReleyCommand uiLoadSingleElementCommand { get; private set; }
         public ReleyCommand uiRunCommand { get; private set; }
 

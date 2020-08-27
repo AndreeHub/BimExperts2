@@ -5,6 +5,8 @@ using BimExperts.Views;
 using System;
 using System.Reflection;
 using System.Windows.Media.Imaging;
+using BimExperts.Commands;
+using Autodesk.Revit.Creation;
 
 namespace BimExperts
 {
@@ -22,6 +24,8 @@ namespace BimExperts
         //Measure and count
         private MagicRenumber windowMagicRenumber;
         private MeasureAndCount windowMeasureAndCount;
+
+        private BitmapImage transferImage;
 
         #endregion Vars
 
@@ -48,18 +52,20 @@ namespace BimExperts
             Uri MeasureAndCountImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/Measure and count.png");
             Uri TransitionImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/Magic Transition.png");
             Uri MagicTransition = new Uri("pack://application:,,,/BimExperts;component/Resources/Magic Renumber.png");
+            Uri BimExpertsLogo = new Uri("pack://application:,,,/BimExperts;component/Resources/bimexperts.png");
             //Create Bitmap image
             BitmapImage InfoImage = new BitmapImage(InfoImagePath);
             BitmapImage MeasureAndCountImage = new BitmapImage(MeasureAndCountImagePath);
             BitmapImage ChangeHostedLevelImage = new BitmapImage(MagicTransition);
             BitmapImage TransitionImage = new BitmapImage(TransitionImagePath);
+            transferImage = new BitmapImage(BimExpertsLogo);
             //Create ribbon element
 
             //create ribbon
             string AssemblyPath = Assembly.GetExecutingAssembly().Location;
 
             PushButtonData InfoData = new PushButtonData("Info", "Hello", AssemblyPath, "BimExperts.TestCommand");
-            PushButtonData MeasureAndCountData = new PushButtonData("Measure and Count", "Measure \n and Count", AssemblyPath, "BimExperts.TestCommand");
+            PushButtonData MeasureAndCountData = new PushButtonData("Measure and Count", "Measure \n and Count", AssemblyPath, "BimExperts.Commands.MeasureAndCountComm");
             PushButtonData TransitionData = new PushButtonData("Magic Transition", "Magic \n Transition", AssemblyPath, "BimExperts.CreateTransition");
             PushButtonData ChangeHosteLevelData = new PushButtonData("Change Hosted Level", "Magic \n Renumber", AssemblyPath, "BimExperts.StartMagicRenumber");
 
@@ -116,21 +122,22 @@ namespace BimExperts
 
         #region MeasureAndCountINI
 
-        public void ShowMeasureAndCount(UIApplication uiapp)
+        public void ShowMeasureAndCount(UIApplication uiapp,UIDocument uiDOC)
         {
-            if (windowMeasureAndCount == null)
-            {
-                windowMeasureAndCount             = new MeasureAndCount();
-                macVmod                           = new MeasureAndCountViewModel(windowMeasureAndCount);
-                windowMeasureAndCount.DataContext = macVmod;
+            //if (windowMeasureAndCount == null)
+           // {
+            
+                windowMeasureAndCount                  = new MeasureAndCount();
+                windowMeasureAndCount.uiLogoImg.Source = transferImage;
+                macVmod                                = new MeasureAndCountViewModel(windowMeasureAndCount, uiDOC);
 
-                windowMeasureAndCount.Show();
-            }
+                windowMeasureAndCount.DataContext      = macVmod;
+                windowMeasureAndCount.ShowDialog();
+           // }
+            
+            
 
-            if(windowMeasureAndCount != null)
-            {
-                windowMeasureAndCount.Close();
-            }
+            
         }
 
         #endregion MeasureAndCountINI
