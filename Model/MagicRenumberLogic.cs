@@ -16,21 +16,18 @@ namespace BimExperts.Model
 
         //revit intilizers
         private UIApplication UiApp = null;
-
         private Autodesk.Revit.ApplicationServices.Application App = null;
         private UIDocument UiDoc = null;
         private Document Doc = null;
 
         //input vars
         public ICollection<ElementId> unorderedElementIds = null;
-
         public ICollection<ElementId> renumberingOrigin = null;
         private string selectedPara;
         private string startNumber;
 
         //work vars
         private Element Origin = null;
-
         public List<Element> elementsForRenumbering = new List<Element>();
         public List<int> elementsForRenumberingCheckList = new List<int>();
         private List<Element> orderedElements = new List<Element>();

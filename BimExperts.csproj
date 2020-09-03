@@ -117,6 +117,9 @@
     <Compile Include="Views\MeasureAndCount.xaml.cs">
       <DependentUpon>MeasureAndCount.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\REDESIGN_MagicRenumber.xaml.cs">
+      <DependentUpon>REDESIGN_MagicRenumber.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="BimExperts.addin">
@@ -136,7 +139,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MagicRenumberViewResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MeasureAndCount.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\REDESIGN_MagicRenumber.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

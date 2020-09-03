@@ -5,8 +5,6 @@ using BimExperts.Views;
 using System;
 using System.Reflection;
 using System.Windows.Media.Imaging;
-using BimExperts.Commands;
-using Autodesk.Revit.Creation;
 
 namespace BimExperts
 {
@@ -19,17 +17,20 @@ namespace BimExperts
 
         //Magic Renumber
         private MagicRenumberViewModel mrVmod;
+
         private MeasureAndCountViewModel macVmod;
 
         //Measure and count
         private MagicRenumber windowMagicRenumber;
+
         private MeasureAndCount windowMeasureAndCount;
 
         private BitmapImage transferImage;
 
         #endregion Vars
 
-        #region InterfaceMethods  
+        #region InterfaceMethods
+
         public Result OnShutdown(UIControlledApplication application)
         {
             return Result.Succeeded;
@@ -38,10 +39,10 @@ namespace BimExperts
         public Result OnStartup(UIControlledApplication application)
         {
             //preping window vairables
-            windowMagicRenumber   = null;
+            windowMagicRenumber = null;
             windowMeasureAndCount = null;
 
-            thisApp               = this;
+            thisApp = this;
 
             System.Diagnostics.Debugger.Launch();
 
@@ -87,14 +88,15 @@ namespace BimExperts
 
             return Result.Succeeded;
         }
-        #endregion
+
+        #endregion InterfaceMethods
 
         #region MagicRenumberIni
 
         public void ShowWindowMagicrenumber(UIApplication uiapp)
         {
             //if we do not have a dialoge yet, create it
-            if (windowMagicRenumber == null)
+            if (windowMagicRenumber             == null)
             {
                 //A new handeler to handle request posting by the dialog
                 MagicRenumberHandler handler    = new MagicRenumberHandler();
@@ -102,15 +104,12 @@ namespace BimExperts
                 //External event for the dialog to use (to post requests)
                 ExternalEvent exEvent           = ExternalEvent.Create(handler);
 
-                //create LogicClass for MagicRenumber
-
+                //create LogicClass for 
                 MagicRenumberLogic logic        = new MagicRenumberLogic();
 
                 // We give the objects to the new dialog;
                 // The dialog becomes the owner responsible fore disposing them, eventual
-
                 mrVmod                          = new MagicRenumberViewModel(exEvent, handler, logic);
-
                 windowMagicRenumber             = new MagicRenumber();
                 windowMagicRenumber.DataContext = mrVmod;
 
@@ -122,22 +121,17 @@ namespace BimExperts
 
         #region MeasureAndCountINI
 
-        public void ShowMeasureAndCount(UIApplication uiapp,UIDocument uiDOC)
+        public void ShowMeasureAndCount(UIApplication uiapp, UIDocument uiDOC)
         {
             //if (windowMeasureAndCount == null)
-           // {
-            
-                windowMeasureAndCount                  = new MeasureAndCount();
-                windowMeasureAndCount.uiLogoImg.Source = transferImage;
-                macVmod                                = new MeasureAndCountViewModel(windowMeasureAndCount, uiDOC);
+            // {
+            windowMeasureAndCount = new MeasureAndCount();
+            windowMeasureAndCount.uiLogoImg.Source = transferImage;
+            macVmod = new MeasureAndCountViewModel(windowMeasureAndCount, uiDOC);
 
-                windowMeasureAndCount.DataContext      = macVmod;
-                windowMeasureAndCount.ShowDialog();
-           // }
-            
-            
-
-            
+            windowMeasureAndCount.DataContext = macVmod;
+            windowMeasureAndCount.ShowDialog();
+            // }
         }
 
         #endregion MeasureAndCountINI
