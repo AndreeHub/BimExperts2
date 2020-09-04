@@ -38,15 +38,32 @@ namespace BimExperts.ViewModels
             set { _selectedParamName = value; }
         }
 
-        private string _startingStringEntry;
+        private string _startingStringEntryBase;
 
-        public string StartingStringEntry
+        public string StartingStringEntryBase
         {
-            get { return _startingStringEntry; }
-            set { SetProperty(ref _startingStringEntry, value); }
+            get { return _startingStringEntryBase; }
+            set { SetProperty(ref _startingStringEntryBase, value); }
+        }
+
+        private string _startingStringEntryPrefix;
+
+        public string StartingStringEntryPrefix
+        {
+            get { return _startingStringEntryPrefix; }
+            set { SetProperty(ref _startingStringEntryPrefix, value); }
+        }
+
+        private string _startingStringEntrySuffix;
+
+        public string StartingStringEntrySuffix
+        {
+            get { return _startingStringEntrySuffix; }
+            set { SetProperty(ref _startingStringEntrySuffix, value); }
         }
 
         #endregion varDefs
+
         #region Constructor
         /// <summary>
         /// constructor for event
@@ -75,7 +92,7 @@ namespace BimExperts.ViewModels
         {
             handler.mode = selectionMode.Run;
             logic.setStartingParameterName(_selectedParamName);
-            logic.setStartinParameterNumber(_startingStringEntry);
+            logic.setStartinParameterNumber(_startingStringEntryBase);
             exEvent.Raise();
         }
 

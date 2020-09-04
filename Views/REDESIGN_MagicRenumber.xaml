@@ -1,69 +1,103 @@
 ﻿<Window
     x:Class="BimExperts.Views.REDESIGN_MagicRenumber"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:BimExperts.Views"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="350">
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="400"
+    d:DesignWidth="350"
+    mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary 
-
-                  Source="MagicRenumberViewResources.xaml">
-                </ResourceDictionary>
+                <ResourceDictionary Source="MagicRenumberViewResources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </Window.Resources>
-
-    <Grid >
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-             <ColumnDefinition Width="10*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="1*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height= "1*"/>
-            <RowDefinition Height="10*"/> <!-- For the Controls-->
-            <RowDefinition Height="2*"/><!--For the logo-->
-        </Grid.RowDefinitions>
-        <Border Grid.Row="0" Grid.ColumnSpan="4" Background="#2c2c2c"/>
-        <Border Grid.Row="1" Grid.ColumnSpan="4" Background="#2c2c2c"/>
-        <Border Grid.Row="2" Grid.ColumnSpan="4" Background="#2c2c2c"/>
-        <Border Grid.Column="1" Grid.Row="1">
-            <StackPanel>
-                <TextBlock Text="Select system elements in a line"/>
-                <Button Content="Load System Elements"/>
-                <TextBlock Text="Select starting element for renumbering"/>
-                <Button Content="Load Origin Element"/>
-                <TextBlock Text="Select  parameter for renumbering"/>
-                <ComboBox  Margin="0 0 0 5" Height="30"/>
-                <TextBlock Text="Enter starting number" TextAlignment="Center"
-                           Margin="0 10 0 0"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <StackPanel>
-                        <TextBlock Text="Prefix" TextAlignment="Center"/>
-                        <TextBox  Width="70" Margin=" 0 0 0 0"/>
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="Base" TextAlignment="Center"/>
-                        <TextBox  Width="70" Margin=" 5 0 0 0"/>
-                    </StackPanel>
-                    <StackPanel>
-                        <TextBlock Text="Suffix" TextAlignment="Center"/>
-                        <TextBox  Width="70" Margin=" 5 0 0 0"/>
-                    </StackPanel>
-                </StackPanel>
-                
-                <Button Content="Run" Margin="0 15 0 0"/>
-            </StackPanel>
-        </Border> 
         
-        <Border Grid.ColumnSpan="4" Grid.Row="2" >
+    </Window.Resources>
+ 
+
+
+
+        <Grid>
+<!--#region Grid Defenition 4x3-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="10*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="10*" />
+                <!--  For the Controls  -->
+                <RowDefinition Height="2*" />
+                <!--  For the logo  -->
+            </Grid.RowDefinitions>
             
+<!--#endregion-->
+<!--#region Backgorund borded-->
+        <Border
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="4"
+                Background="#2c2c2c" />
+        <!--#endregion-->
+<!--#region Main user area-->
+            <Border Grid.Row="1" Grid.Column="1">
+                <StackPanel>
+                    <TextBlock Text="Select system elements in a line" />
+                    <Button Content="Load System Elements" 
+                            Command="{Binding uiLoadSystemElementsCommand}"/>
+                    <TextBlock Text="Select starting element for renumbering" />
+                <Button Content="Load Origin Element" 
+                        Command="{Binding uiLoadSingleElementCommand}"/>
+                    <TextBlock Text="Select  parameter for renumbering" />
+                    <ComboBox  Margin="0,0,0,5"
+                              ItemsSource="{Binding ParameterNames}"
+                              SelectedItem="{Binding SelectedParamName}" />
+                    <TextBlock
+                        Margin="0,10,0,0"
+                        Text="Enter starting number"
+                        TextAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" >
+                        <StackPanel>
+                            <TextBlock Text="Prefix" TextAlignment="Center" />
+                            <TextBox Width="70" 
+                                      Text="{Binding StartingStringEntryPrefix}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Base Number" TextAlignment="Center" />
+                            <TextBox Width="70" Margin="17,0,17,0"
+                                      Text="{Binding StartingStringEntryBase}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Suffix" TextAlignment="Center" />
+                            <TextBox Width="70"
+                                      Text="{Binding StartingStringEntrySuffix}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                <Button Margin="0,15,0,0" Content="Run" />
+            </StackPanel>
+            </Border>
+<!--#endregion-->
+<!--#region  Varyfication arae-->
+        <Border Grid.Row="1" Grid.Column="2">
+            <StackPanel>
+                <Ellipse Margin="0,29,0,0" />
+                <Ellipse Margin="0,29,0,0" />
+                <Ellipse Margin="0,29 ,0,0" />
+                <Ellipse Margin="0,95,0,0" />
+            </StackPanel>
         </Border>
+<!--#endregion-->
+<!--#region Company Logo-->
+
+        <Image x:Name="uiLogoImg" Height="50" 
+               Grid.Column="0"
+               Grid.ColumnSpan="4" Grid.Row="2" Source="bimexperts.png" 
+               Margin="0 0 100 15"/>
+<!--#endregion-->
     </Grid>
+
 </Window>

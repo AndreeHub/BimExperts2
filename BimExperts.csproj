@@ -162,6 +162,9 @@
   <ItemGroup>
     <Resource Include="Resources\bimexperts.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\bimexperts.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)"."" "$(AppData)\Autodesk\Revit\Addins\2019\"
