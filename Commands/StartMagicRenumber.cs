@@ -11,6 +11,7 @@ namespace BimExperts
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             ExternalApp.thisApp.ShowWindowMagicrenumber(commandData.Application);
+
             return Result.Succeeded;
         }
     }

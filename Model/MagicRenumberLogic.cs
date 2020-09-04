@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Windows;
 using static BimExperts.Model.MagicRenumberHandler;
 
@@ -25,6 +26,9 @@ namespace BimExperts.Model
         public ICollection<ElementId> renumberingOrigin = null;
         private string selectedPara;
         private string startNumber;
+        private string startPrefix;
+        private string startSuffix;
+        private int startNumberSize;
 
         //work vars
         private Element Origin = null;
@@ -112,20 +116,19 @@ namespace BimExperts.Model
 
         }
 
-
         private void setParamters()
         {
-            //1.get the starting number from input string
+            //1.get the starting number from input string and save its length so you can return it in the correct format (example if 001 is typed the reuslts should be in the form of 002 , 043 143)
+            startNumberSize = startNumber.Length;
             int num = int.Parse(startNumber);
             string val;
             Parameter pa;
             using (Transaction trans = new Transaction(Doc, "Set params"))
             {
                 trans.Start();
-
                 foreach (Element ele in orderedElements)
                 {
-                    val = num.ToString();
+                    val = formatOutputString(num);
                     pa = ele.LookupParameter(selectedPara);
                     pa.Set(val);
                     num++;
@@ -135,6 +138,27 @@ namespace BimExperts.Model
 
             }
                 
+        }
+        /// <summary>
+        /// Add prefix + zeroes + number + suffix 
+        /// The number of zeroes is determined based on the starting string length from BaseNumber field.
+        /// </summary>
+        /// <param name="num"></param>
+        private string formatOutputString(int num)
+        {
+            string stringBuilder = "";
+            stringBuilder += startPrefix;
+            string numberString = num.ToString();
+            int addedZeros = startNumberSize - numberString.Length;
+            for (int i = 0; i < addedZeros; i++)
+            {
+                stringBuilder += "0";
+            }
+            stringBuilder += numberString;
+            stringBuilder += startSuffix;
+
+            return stringBuilder;
+
         }
 
         private bool isFinalElement()
@@ -230,10 +254,12 @@ namespace BimExperts.Model
             }
             return connectors;
         }
-
-        internal void setStartinParameterNumber(string str)
+  
+        internal void setStartinParameterNumber(string startingStringEntryBase, string startingStringEntryPrefix, string startingStringEntrySuffix)
         {
-            startNumber = str;
+            startNumber = startingStringEntryBase;
+            startPrefix = startingStringEntryPrefix;
+            startSuffix = startingStringEntrySuffix;
         }
 
         internal void setStartingParameterName(string str)

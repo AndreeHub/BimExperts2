@@ -1,36 +1,53 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys = "clr-namespace:System;assembly=mscorlib"
     xmlns:local="using:BimExperts.Views">
-
+    
+<!--#region Window Wide Resources-->
     <SolidColorBrush x:Key="ButtonBackground" Color="#3f3f3f"/>
     <SolidColorBrush x:Key="BorderDefaultBackgroudn" Color="#2c2c2c"/>
+    <SolidColorBrush x:Key="TextColor" Color="Beige"/>
+    <SolidColorBrush x:Key="ButtonTextColor" Color="#ff6f00"/>
+    <sys:Double x:Key="ItemSize">20</sys:Double>
+    <!--#endregion-->
+<!--#region  Item Styles-->    
+    <Style TargetType="Ellipse">
+        <Setter Property="Width" Value="{StaticResource ItemSize}"/>
+        <Setter Property="Height" Value="{StaticResource ItemSize}"/>
+        <Setter Property="Fill" Value="{StaticResource ButtonTextColor}"/>
+        <Setter Property="Stroke" Value="{StaticResource TextColor}"/>     
+    </Style>
+    
     <Style TargetType="Border">
         <Setter Property="Background" Value="{StaticResource BorderDefaultBackgroudn}"/>
     </Style>
     <Style TargetType="Button">
         <Setter Property="Background" Value="{StaticResource ButtonBackground}"/>
         <Setter Property="FontFamily" Value="Open Sans"/>
-        <Setter Property="Foreground" Value="#DDDDDD"/>
-        <Setter Property="Height" Value="30"/>
+        <Setter Property="Foreground" Value="{StaticResource ButtonTextColor}"/>
+        <Setter Property="Height" Value="{StaticResource ItemSize}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource TextColor}"/>
     </Style>
     <Style TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Open Sans"/>
-        <Setter Property="Foreground" Value="#DDDDDD"/>
+        <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
         <Setter Property="Margin" Value="5 10 5 5"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="TextAlignment" Value="Left"/>
         <Setter Property="TextAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+        
     </Style>
     <Style TargetType="TextBox">
         <Setter Property="Background" Value="{StaticResource ButtonBackground}"/>
         <Setter Property="FontFamily" Value="Open Sans"/>
-        <Setter Property="Foreground" Value="#DDDDDD"/>
-        <Setter Property="Margin" Value="0 5 0 5"/>
-        <Setter Property="Height" Value="30"/>
-
+        <Setter Property="Foreground" Value="{StaticResource TextColor}"/>
+        <Setter Property="Height" Value="{StaticResource ItemSize}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource TextColor}"/>
     </Style>
-<!-- Fonts and Image is going to have to be addeed from dll on runtime-->
+    <!--#endregion-->
+    <!--#region  Control Templates-->
     <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -42,7 +59,7 @@
                   Grid.ColumnSpan="2"
                   CornerRadius="0"
                   Background="#FF3F3F3F"
-                  BorderBrush="#FF97A0A5"
+                  BorderBrush="{StaticResource TextColor}"
                   BorderThickness="1" />
             <Border 
                   Grid.Column="0"
@@ -196,5 +213,6 @@
         </Setter>
     </Style>
 
+    <!--#endregion-->
 
 </ResourceDictionary>

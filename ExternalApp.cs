@@ -4,6 +4,8 @@ using BimExperts.ViewModels;
 using BimExperts.Views;
 using System;
 using System.Reflection;
+using System.Windows;
+using System.Windows.Forms.Integration;
 using System.Windows.Media.Imaging;
 
 namespace BimExperts
@@ -20,9 +22,10 @@ namespace BimExperts
 
         private MeasureAndCountViewModel macVmod;
 
-        //Measure and count
-        private MagicRenumber windowMagicRenumber;
 
+        private MagicRenumber windowMagicRenumber;
+       
+        //Measure and count
         private MeasureAndCount windowMeasureAndCount;
 
         private BitmapImage transferImage;
@@ -112,8 +115,12 @@ namespace BimExperts
                 mrVmod                          = new MagicRenumberViewModel(exEvent, handler, logic);
                 windowMagicRenumber             = new MagicRenumber();
                 windowMagicRenumber.DataContext = mrVmod;
-
+                mrVmod.globalWindow = windowMagicRenumber;
                 windowMagicRenumber.Show();
+            } 
+            if (windowMagicRenumber != null)
+            {
+                windowMagicRenumber.Activate();
             }
         }
 
@@ -125,11 +132,11 @@ namespace BimExperts
         {
             //if (windowMeasureAndCount == null)
             // {
-            windowMeasureAndCount = new MeasureAndCount();
+            windowMeasureAndCount                  = new MeasureAndCount();
             windowMeasureAndCount.uiLogoImg.Source = transferImage;
-            macVmod = new MeasureAndCountViewModel(windowMeasureAndCount, uiDOC);
-
-            windowMeasureAndCount.DataContext = macVmod;
+            macVmod                                = new MeasureAndCountViewModel(windowMeasureAndCount, uiDOC);
+            
+            windowMeasureAndCount.DataContext      = macVmod;
             windowMeasureAndCount.ShowDialog();
             // }
         }

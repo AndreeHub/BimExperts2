@@ -1,98 +1,123 @@
-﻿<Window x:Class="BimExperts.Views.MagicRenumber"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:BimExperts.Views"
-        xmlns:vm="clr-namespace:BimExperts.ViewModels"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        Width="350"
-        Height="350"
-        Background="White"
-        BorderBrush="Black"
-        ResizeMode="NoResize"
-        mc:Ignorable="d"
-        Title="Magic Renumber"
-        Topmost="True">
-    <StackPanel>
-        <StackPanel>
-            <TextBlock
-                Margin="5"
-                Foreground="Black"
-                Text="Select elements in revit model (along a system)"
-                TextAlignment="Center"
-                TextWrapping="Wrap" />
-            <!--  THis button should run 2 functions, one to load the selection from revit into assembly, the other to get all the properties that the set contains  -->
-            <Button
-                Width="310"
-                Height="30"
-                Margin="5"
-                HorizontalAlignment="Center"
-                Background="White"
-                Command="{Binding uiLoadSystemElementsCommand}"
-                Content="Load system elements" />
-        </StackPanel>
-        <StackPanel>
-            <TextBlock
-                Margin="5"
-                Foreground="Black"
-                Text="Select first element (was contained in preivous selection)"
-                TextAlignment="Center"
-                TextWrapping="Wrap" />
-            <Button
-                Width="310"
-                Height="30"
-                Margin="5"
-                HorizontalAlignment="Center"
-                Background="White"
-                Command="{Binding uiLoadSingleElementCommand}"
-                Content="Load first element" />
-        </StackPanel>
-        <StackPanel>
-            <TextBlock
-                Margin="5"
-                Foreground="Black"
-                Text="Select the parameter that will be used for renumbering"
-                TextAlignment="Center"
-                TextWrapping="Wrap" />
-            <ComboBox Width="310"
-                      Height="30"
-                      IsEditable="True"
-                      ItemsSource="{Binding  ParameterNames}"
-                      SelectedItem="{Binding SelectedParamName}">
-            </ComboBox>
-        </StackPanel>
-        <TextBlock
-            Margin="5"
-            Foreground="Black"
-            Text="Enter starting mark (must end with number) and run"
-            TextAlignment="Center"
-            TextWrapping="Wrap" />
-        <StackPanel Orientation="Horizontal">
-            <TextBox
-                Width="200"
-                Height="30"
-                Margin="15,5,5,5"
-                Padding="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                TextAlignment="Right"
-                Text="{Binding StartingStringEntry}"
-                VerticalContentAlignment="Center" />
-            <Button
-                Width="100"
-                Height="30"
-                Margin="5"
-                HorizontalAlignment="Right"
-                Background="White"
-                Command="{Binding uiRunCommand}"
-                Content="Run" />
-        </StackPanel>
-        <StackPanel>
-            <TextBlock Margin="15,5,20,15"
-                       Foreground="Black"
-                       Text="Note: Selection should be made by selecting first element in a system, then mouseovering over the last desired element, then pressing tab + left mouse click"
-                       TextAlignment="Center"
-                       TextWrapping="Wrap" />
-        </StackPanel>
-    </StackPanel>
+﻿<Window
+    x:Class="BimExperts.Views.MagicRenumber"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:BimExperts.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:BimExperts.ViewModels"
+    Height="400"
+    Width="350"
+    mc:Ignorable="d"
+    Title="Magic Renumber"
+    Topmost="True"
+    ResizeMode="NoResize">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="MagicRenumberViewResources.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding CloseCommand}"
+                    Key="Esc" />
+    </Window.InputBindings>
+
+
+
+    <Grid>
+        <!--#region Grid Defenition 4x3-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="10*" />
+            <!--  For the Controls  -->
+            <RowDefinition Height="2*" />
+            <!--  For the logo  -->
+        </Grid.RowDefinitions>
+
+        <!--#endregion-->
+        <!--#region Backgorund borded-->
+        <Border
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="4"
+            Background="#2c2c2c" />
+        <!--#endregion-->
+        <!--#region Main user area-->
+        <Border Grid.Row="1" Grid.Column="2">
+            <StackPanel>
+                <Ellipse Margin="0,29,0,0" />
+                <Ellipse Margin="0,29,0,0" />
+                <Ellipse Margin="0,29,0,0" />
+                <Ellipse Margin="0,93,0,0" />
+            </StackPanel>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="1">
+            <StackPanel>
+                <TextBlock Text="Select system elements in a line" />
+                <Button Command="{Binding uiLoadSystemElementsCommand}" 
+                        Content="Load System Elements" />
+                <TextBlock Text="Select starting element for renumbering" />
+                <Button Command="{Binding uiLoadSingleElementCommand}" 
+                        Content="Load Origin Element" />
+                <TextBlock Text="Select  parameter for renumbering" />
+                <ComboBox
+                    Margin="0,0,0,5"
+                    ItemsSource="{Binding ParameterNames}"
+                    SelectedItem="{Binding SelectedParamName}" 
+                    Height="{StaticResource ItemSize}"/>
+                <TextBlock
+                    Margin="0,10,0,0"
+                    Text="Enter starting number"
+                    TextAlignment="Center" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <StackPanel >
+                        <TextBlock Text="Prefix" TextAlignment="Center" />
+                        <TextBox Width="70" 
+                                 Text="{Binding StartingStringEntryPrefix}"
+                                 HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel HorizontalAlignment="Center" Margin="1 0 1  0">
+      
+                        <TextBlock Text="Base Number" TextAlignment="Center" />
+                        <TextBox
+                            Width="70"    
+                            Text="{Binding StartingStringEntryBase}" 
+                            HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel
+                        >
+                        <TextBlock Text="Suffix" TextAlignment="Center" />
+                        <TextBox Width="70" 
+                                 Text="{Binding StartingStringEntrySuffix}"
+                                 HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <Button Margin="0,15,0,0" Content="Run" Command="{Binding uiRunCommand}" />
+            </StackPanel>
+        </Border>
+        <!--#endregion--> 
+        <!--#region  Varyfication arae-->
+        <!--#endregion-->
+        <!--#region Company Logo-->
+
+        <Image
+            x:Name="uiLogoImg"
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            Height="50"
+            Margin="0,0,100,15"
+            Source="bimexperts.png" />
+        <!--#endregion-->
+    </Grid>
+
 </Window>

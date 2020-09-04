@@ -95,6 +95,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CreateTransition.cs" />
@@ -161,6 +162,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\bimexperts.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\bimexperts.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
