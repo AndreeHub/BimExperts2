@@ -1,10 +1,12 @@
-﻿using Autodesk.Revit.UI;
+﻿using Autodesk.Revit.DB.Events;
+using Autodesk.Revit.UI;
 using BimExperts.Model;
 using BimExperts.ViewModels;
 using BimExperts.Views;
 using System;
 using System.Reflection;
 using System.Windows.Media.Imaging;
+using Autodesk.Revit.DB;
 
 namespace BimExperts
 {
@@ -16,16 +18,15 @@ namespace BimExperts
         internal static ExternalApp thisApp = null;
 
         //Magic Renumber
-        private MagicRenumberViewModel mrVmod;
-
+        private MagicRenumberViewModel mrVmod   ;
         private MeasureAndCountViewModel macVmod;
 
         //Measure and count
-        private MagicRenumber windowMagicRenumber;
-
+        private MagicRenumber windowMagicRenumber    ;
         private MeasureAndCount windowMeasureAndCount;
+        private BitmapImage transferImage            ;
 
-        private BitmapImage transferImage;
+        // Timestamps
 
         #endregion Vars
 
@@ -33,47 +34,53 @@ namespace BimExperts
 
         public Result OnShutdown(UIControlledApplication application)
         {
+            application.ControlledApplication.DocumentOpened -= new EventHandler<DocumentOpenedEventArgs>(DocumentOpenedEventHandler);
             return Result.Succeeded;
         }
 
         public Result OnStartup(UIControlledApplication application)
         {
             //preping window vairables
-            windowMagicRenumber = null;
+            windowMagicRenumber   = null;
             windowMeasureAndCount = null;
-
-            thisApp = this;
+            thisApp               = this;
 
             System.Diagnostics.Debugger.Launch();
 
             #region Image and buttons
 
             //add images
-            Uri InfoImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/bim32x32.png");
+            Uri InfoImagePath            = new Uri("pack://application:,,,/BimExperts;component/Resources/bim32x32.png");
             Uri MeasureAndCountImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/Measure and count.png");
-            Uri TransitionImagePath = new Uri("pack://application:,,,/BimExperts;component/Resources/Magic Transition.png");
-            Uri MagicTransition = new Uri("pack://application:,,,/BimExperts;component/Resources/Magic Renumber.png");
-            Uri BimExpertsLogo = new Uri("pack://application:,,,/BimExperts;component/Resources/bimexperts.png");
+            Uri TransitionImagePath      = new Uri("pack://application:,,,/BimExperts;component/Resources/Magic Transition.png");
+            Uri MagicTransition          = new Uri("pack://application:,,,/BimExperts;component/Resources/Magic Renumber.png");
+            Uri BimExpertsLogo           = new Uri("pack://application:,,,/BimExperts;component/Resources/bimexperts.png");
+            Uri TimeStampsImagePath      = new Uri("pack://application:,,,/BimExperts;component/Resources/TimeStamps.png");
             //Create Bitmap image
-            BitmapImage InfoImage = new BitmapImage(InfoImagePath);
-            BitmapImage MeasureAndCountImage = new BitmapImage(MeasureAndCountImagePath);
-            BitmapImage ChangeHostedLevelImage = new BitmapImage(MagicTransition);
-            BitmapImage TransitionImage = new BitmapImage(TransitionImagePath);
-            transferImage = new BitmapImage(BimExpertsLogo);
+            BitmapImage InfoImage              = new BitmapImage(InfoImagePath           );
+            BitmapImage MeasureAndCountImage   = new BitmapImage(MeasureAndCountImagePath);
+            BitmapImage ChangeHostedLevelImage = new BitmapImage(MagicTransition         );
+            BitmapImage TransitionImage        = new BitmapImage(TransitionImagePath     );
+            BitmapImage TimeStampsImage        = new BitmapImage(TimeStampsImagePath     );
+            transferImage                      = new BitmapImage(BimExpertsLogo          );
             //Create ribbon element
 
             //create ribbon
             string AssemblyPath = Assembly.GetExecutingAssembly().Location;
 
-            PushButtonData InfoData = new PushButtonData("Info", "Hello", AssemblyPath, "BimExperts.TestCommand");
-            PushButtonData MeasureAndCountData = new PushButtonData("Measure and Count", "Measure \n and Count", AssemblyPath, "BimExperts.Commands.MeasureAndCountComm");
-            PushButtonData TransitionData = new PushButtonData("Magic Transition", "Magic \n Transition", AssemblyPath, "BimExperts.CreateTransition");
+            // Create button data
+            PushButtonData InfoData             = new PushButtonData("Info", "Hello", AssemblyPath, "BimExperts.TestCommand");
+            PushButtonData MeasureAndCountData  = new PushButtonData("Measure and Count", "Measure \n and Count", AssemblyPath, "BimExperts.Commands.MeasureAndCountComm");
+            PushButtonData TransitionData       = new PushButtonData("Magic Transition", "Magic \n Transition", AssemblyPath, "BimExperts.CreateTransition");
             PushButtonData ChangeHosteLevelData = new PushButtonData("Change Hosted Level", "Magic \n Renumber", AssemblyPath, "BimExperts.StartMagicRenumber");
+            PushButtonData TimeStampsData       = new PushButtonData("Time Stamps", "Place \n TimeStamps", AssemblyPath, "BimExperts.TimeStamps");
 
-            InfoData.LargeImage = InfoImage;
-            MeasureAndCountData.LargeImage = MeasureAndCountImage;
-            TransitionData.LargeImage = TransitionImage;
+            // Set the button data
+            InfoData.LargeImage             = InfoImage             ;
+            MeasureAndCountData.LargeImage  = MeasureAndCountImage  ;
+            TransitionData.LargeImage       = TransitionImage       ;
             ChangeHosteLevelData.LargeImage = ChangeHostedLevelImage;
+            TimeStampsData.LargeImage       = TimeStampsImage       ;
 
             #endregion Image and buttons
 
@@ -81,12 +88,18 @@ namespace BimExperts
             application.CreateRibbonTab("BimExperts");
             RibbonPanel panel = application.CreateRibbonPanel("BimExperts", "Tool Box");
 
-            panel.AddItem(InfoData);
-            panel.AddItem(MeasureAndCountData);
-            panel.AddItem(TransitionData);
+            panel.AddItem(InfoData            );
+            panel.AddItem(MeasureAndCountData );
+            panel.AddItem(TransitionData      );
             panel.AddItem(ChangeHosteLevelData);
+            panel.AddItem(TimeStampsData      );
+            
+            //Register Event for document opening
+            application.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(DocumentOpenedEventHandler);
 
             return Result.Succeeded;
+
+
         }
 
         #endregion InterfaceMethods
@@ -135,5 +148,32 @@ namespace BimExperts
         }
 
         #endregion MeasureAndCountINI
+
+        #region TimestampsINI
+
+        public void DocumentOpenedEventHandler(object sender, DocumentOpenedEventArgs args)
+        {
+            Document doc = args.Document;
+
+            TimeStampsModel model = new TimeStampsModel(doc);
+            model.CreateExtensibleStorage();
+
+            // This part is for the updater
+            Guid guid = new Guid("e077f599-5c89-43cd-b550-986237c50b85");
+            TimeStampsDynamicUpdater tsdynUpdt = new TimeStampsDynamicUpdater(guid);
+            // registers the updater
+            UpdaterRegistry.RegisterUpdater(tsdynUpdt, true);
+
+            ElementFilter filter = new ElementClassFilter(typeof(FamilyInstance));
+
+            ChangeType change = ChangeType.ConcatenateChangeTypes(Element.GetChangeTypeAny(), Element.GetChangeTypeElementAddition());
+
+            UpdaterRegistry.AddTrigger(tsdynUpdt.GetUpdaterId(),filter,change);
+
+        }
+
+
+
+        #endregion
     }
 }

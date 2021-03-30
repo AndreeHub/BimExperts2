@@ -100,6 +100,10 @@
     <Compile Include="Commands\CreateTransition.cs" />
     <Compile Include="Commands\MeasureAndCountComm.cs" />
     <Compile Include="Commands\StartMagicRenumber.cs" />
+    <Compile Include="Commands\TimeStamps.cs" />
+    <Compile Include="ExternalDBApp.cs" />
+    <Compile Include="Model\TimeStampsDynamicUpdater.cs" />
+    <Compile Include="Model\TimeStampsModel.cs" />
     <Compile Include="Model\MagicRenumberSystemElementNodecs.cs" />
     <Compile Include="Model\MeasureAndCountLogic.cs" />
     <Compile Include="ViewModelBase.cs" />
@@ -163,11 +167,12 @@
     <Resource Include="Resources\bimexperts.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\TimeStamps.png" />
     <Content Include="Views\bimexperts.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetDir)"."" "$(AppData)\Autodesk\Revit\Addins\2019\"
-copy "$(TargetDir)"."" "$(AppData)\Autodesk\Revit\Addins\2020\"</PostBuildEvent>
+    <PostBuildEvent>if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)*.addin" "$(AppData)\Autodesk\REVIT\Addins\2020"
+if exist "$(AppData)\Autodesk\REVIT\Addins\2020" copy "$(ProjectDir)$(OutputPath)*.dll" "$(AppData)\Autodesk\REVIT\Addins\2020"</PostBuildEvent>
   </PropertyGroup>
 </Project>
