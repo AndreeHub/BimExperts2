@@ -18,7 +18,9 @@ namespace BimExperts.Model
         /// <returns></returns>
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            
+            TimeStampsModel.getCategories(commandData.Application.ActiveUIDocument.Document);
+
+            TimeStampsModel.SetUpProjectParams();
            // ExternalApp.thisApp.TimeStampsStartUp(doc, uidoc);
             return Result.Succeeded;
         }

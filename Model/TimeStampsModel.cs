@@ -14,24 +14,27 @@ namespace BimExperts.Model
         //private UIDocument uidoc;
         private Autodesk.Revit.DB.Document doc;
 
-
         private static string schemaName          = "Time stamps data";
         private static string schemaDocumentation = "Storage for time data";
         private static string schemaGuid          = "8107fd14-c2cb-48e3-b079-dddbbea1caef";
 
-
         public static string pnCreatedTime        = "Created time";
-        public static string pnCreatedBy          = "Created by";
+        public static string pnCreatedBy          = "Created by"  ;
+
         public static string pnChangedTime        = "Changed time";
-        public static string pnChangedBy          = "Changed by";
+
+       
+        public static string pnChangedBy          = "Changed by"  ;
 
         public static Schema sch;
-        
 
+        // this set stores all the elements that the updater has edited to be used in the button nexecution context
+        public static HashSet<ElementId> eleIdsForTransfer = new HashSet<ElementId>();
+        public static HashSet<Category> eleIdsCats = new HashSet<Category>();
+       
         public TimeStampsModel(Document doc)
         {
-            this.doc   = doc  ;
-            
+            this.doc = doc;
         } 
 
         internal void CreateExtensibleStorage()
@@ -68,13 +71,23 @@ namespace BimExperts.Model
             return schema;
         }
 
-        public static void createUIUpdater()
+        internal static void getCategories(Document document)
         {
-
+            foreach (ElementId id in eleIdsForTransfer)
+            {
+                Category cat = document.GetElement(id).Category;
+                eleIdsCats.Add(cat);
+            }
+           
         }
 
-
-
+        internal static void SetUpProjectParams()
+        {
+            
+        }
         
+
+
+
     }
 }
