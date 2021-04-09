@@ -12,7 +12,8 @@ namespace BimExperts.Model
     class TimeStampsModel
     {
         //private UIDocument uidoc;
-        private Autodesk.Revit.DB.Document doc;
+        public Autodesk.Revit.DB.Document doc;
+        
 
         private static string schemaName          = "Time stamps data";
         private static string schemaDocumentation = "Storage for time data";
@@ -25,6 +26,9 @@ namespace BimExperts.Model
 
        
         public static string pnChangedBy          = "Changed by"  ;
+
+        public static string spTstGrpName         = "Timestamps_TEST_GROUP";
+        public static string spTstParName         = "Timestams_Data";
 
         public static Schema sch;
 
@@ -80,14 +84,49 @@ namespace BimExperts.Model
             }
            
         }
-
-        internal static void SetUpProjectParams()
+        //Create shared parameters
+        //Group Test
+        //Params Timestamp_Test_
+        internal static void SetUpProjectParams(UIApplication application)
         {
-            
+            application.Application.OpenSharedParameterFile();
+            // create parametars on the elements that can store the time data
+           
+            DefinitionFile defFile = application.Application.OpenSharedParameterFile();
+            //create group Name
+            DefinitionGroup group  = defFile.Groups.get_Item(spTstGrpName);
+            if (group == null)
+            {
+                defFile.Groups.Create(spTstGrpName);
+            }
+
+            //create shared param definition
+            Definition def = group.Definitions.get_Item(spTstParName);
+
+            ParameterType _defType = ParameterType.Text;
+
+            if (null == def)
+            {
+                ExternalDefinitionCreationOptions opt = new ExternalDefinitionCreationOptions(spTstParName, _defType);
+
+                opt.Visible = true;
+
+                def = group.Definitions.Create(opt);
+
+            }
+            // Create the category sset
+            CategorySet cat = null;
+            CategorySet catSet = application.Application.Create.NewCategorySet();
+            foreach (Category cats in eleIdsCats)
+            {
+                catSet.Insert(cats);
+            }
+
+            Binding binding = application.Application.Create.NewInstanceBinding(catSet);
+
+            application.ActiveUIDocument.Document.ParameterBindings.Insert(def,binding);
+
         }
         
-
-
-
     }
 }

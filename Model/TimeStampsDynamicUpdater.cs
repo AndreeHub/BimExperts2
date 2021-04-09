@@ -63,7 +63,6 @@ namespace BimExperts.Model
             Entity entsy  = new Entity(schemy)                            ;
             Field fieldsy = schemy.GetField(TimeStampsModel.pnChangedTime);
             entsy.Set(fieldsy, time)                                      ;
-
             return entsy;
         }
 
@@ -83,7 +82,9 @@ namespace BimExperts.Model
         {
             foreach (ElementId id in eleIds)
             {
+                //set entities
                 doc.GetElement(id).SetEntity(ent);
+                //add to a unique list of elements
                 TimeStampsModel.eleIdsForTransfer.Add(id);
             }
         }

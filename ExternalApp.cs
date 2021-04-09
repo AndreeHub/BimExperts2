@@ -7,7 +7,7 @@ using System;
 using System.Reflection;
 using System.Windows.Media.Imaging;
 using Autodesk.Revit.DB;
-
+using Autodesk.Revit.ApplicationServices;
 namespace BimExperts
 {
     public class ExternalApp : IExternalApplication
@@ -16,7 +16,8 @@ namespace BimExperts
         #region Vars
 
         internal static ExternalApp thisApp = null;
-
+         
+       
         //Magic Renumber
         private MagicRenumberViewModel mrVmod   ;
         private MeasureAndCountViewModel macVmod;
@@ -27,7 +28,7 @@ namespace BimExperts
         private BitmapImage transferImage            ;
 
         // Timestamps
-
+        private ControlledApplication conApp;
         #endregion Vars
 
         #region InterfaceMethods
@@ -44,9 +45,9 @@ namespace BimExperts
             windowMagicRenumber   = null;
             windowMeasureAndCount = null;
             thisApp               = this;
-
+           
             System.Diagnostics.Debugger.Launch();
-
+            conApp = application.ControlledApplication;
             #region Image and buttons
 
             //add images

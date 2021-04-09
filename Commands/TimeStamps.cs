@@ -20,7 +20,7 @@ namespace BimExperts.Model
         {
             TimeStampsModel.getCategories(commandData.Application.ActiveUIDocument.Document);
 
-            TimeStampsModel.SetUpProjectParams();
+            TimeStampsModel.SetUpProjectParams(commandData.Application);
            // ExternalApp.thisApp.TimeStampsStartUp(doc, uidoc);
             return Result.Succeeded;
         }
