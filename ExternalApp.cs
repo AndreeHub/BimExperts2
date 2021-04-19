@@ -173,8 +173,18 @@ namespace BimExperts
 
         }
 
+        public void RunCommand(ExternalCommandData commandData)
+        {
 
+            TimeStampsModel.getCategories(commandData.Application.ActiveUIDocument.Document);
 
+            TimeStampsModel.SetUpProjectParams(commandData.Application);
+
+            TimeStampsModel.SetElementInformation(commandData.Application.ActiveUIDocument.Document);
+        }
         #endregion
+
+
+
     }
 }

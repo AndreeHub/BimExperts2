@@ -23,8 +23,9 @@ namespace BimExperts.Model
             ICollection<ElementId> elesAdded = data.GetAddedElementIds();
             ICollection<ElementId> elesChanged = data.GetModifiedElementIds();
             string time = DateTime.Now.ToString();
-
+            
             Entity changeEntity = createChangedEntity(time);
+            
             Entity createdEntity = createNewElEntity(time);
             //assign  Entities to elements
             appendEntityToElements(doc, elesAdded, createdEntity);

@@ -4,7 +4,8 @@ using Autodesk.Revit.DB.Mechanical;
 using Autodesk.Revit.UI;
 using System.Collections.Generic;
 
-namespace BimExperts.Model 
+
+namespace BimExperts
 {
     [Transaction(TransactionMode.Manual)]
     class TimeStamps : IExternalCommand
@@ -18,11 +19,10 @@ namespace BimExperts.Model
         /// <returns></returns>
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            TimeStampsModel.getCategories(commandData.Application.ActiveUIDocument.Document);
+            ExternalApp.thisApp.RunCommand(commandData);
 
-            TimeStampsModel.SetUpProjectParams(commandData.Application);
-           // ExternalApp.thisApp.TimeStampsStartUp(doc, uidoc);
             return Result.Succeeded;
         }
     }
+
 }
