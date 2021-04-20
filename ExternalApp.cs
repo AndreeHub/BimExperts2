@@ -16,6 +16,7 @@ namespace BimExperts
         #region Vars
 
         internal static ExternalApp thisApp = null;
+        TimeStampsModel model = null;
          
        
         //Magic Renumber
@@ -29,6 +30,7 @@ namespace BimExperts
 
         // Timestamps
         private ControlledApplication conApp;
+
         #endregion Vars
 
         #region InterfaceMethods
@@ -98,7 +100,14 @@ namespace BimExperts
             //Register Event for document opening
             application.ControlledApplication.DocumentOpened += new EventHandler<DocumentOpenedEventArgs>(DocumentOpenedEventHandler);
 
+            
+            
+            
+            
+            
             return Result.Succeeded;
+
+  
 
 
         }
@@ -155,32 +164,24 @@ namespace BimExperts
         public void DocumentOpenedEventHandler(object sender, DocumentOpenedEventArgs args)
         {
             Document doc = args.Document;
-
+            //TaskDialog.Show("Hellothere", "We are in the event handler");
             TimeStampsModel model = new TimeStampsModel(doc);
+            //TaskDialog.Show("Hellothere", "Class was created");
             model.CreateExtensibleStorage();
-
-            // This part is for the updater
-            Guid guid = new Guid("e077f599-5c89-43cd-b550-986237c50b85");
-            TimeStampsDynamicUpdater tsdynUpdt = new TimeStampsDynamicUpdater(guid);
-            // registers the updater
-            UpdaterRegistry.RegisterUpdater(tsdynUpdt, true);
-
-            ElementFilter filter = new ElementClassFilter(typeof(FamilyInstance));
-
-            ChangeType change = ChangeType.ConcatenateChangeTypes(Element.GetChangeTypeAny(), Element.GetChangeTypeElementAddition());
-
-            UpdaterRegistry.AddTrigger(tsdynUpdt.GetUpdaterId(),filter,change);
+            //TaskDialog.Show("Hellothere", "Extensible storage was created");
+            model.SetUpUpdater();
+           // TaskDialog.Show("hello again","The setup was executed");
 
         }
 
         public void RunCommand(ExternalCommandData commandData)
         {
 
-            TimeStampsModel.getCategories(commandData.Application.ActiveUIDocument.Document);
+            model.getCategories(commandData.Application.ActiveUIDocument.Document);
 
-            TimeStampsModel.SetUpProjectParams(commandData.Application);
+            model.SetUpProjectParams(commandData.Application);
 
-            TimeStampsModel.SetElementInformation(commandData.Application.ActiveUIDocument.Document);
+            model.SetElementInformation(commandData.Application.ActiveUIDocument.Document);
         }
         #endregion
 

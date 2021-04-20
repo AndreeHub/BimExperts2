@@ -12,36 +12,39 @@ namespace BimExperts.Model
     class TimeStampsModel
     {
         //private UIDocument uidoc;
-        public Autodesk.Revit.DB.Document doc;
+        private Autodesk.Revit.DB.Document doc;
         
        
 
-        private static string schemaName          = "Time stamps data";
-        private static string schemaDocumentation = "Storage for time data";
-        private static string schemaGuid          = "8107fd14-c2cb-48e3-b079-dddbbea1caef";
+        private  string schemaName          = "Time_stamps_data";
+        private  string schemaDocumentation = "Storage for time data";
+        private  string schemaGuid          = "8107fd14-c2cb-48e3-b079-dddbbea1caef";
 
-        public static string pnCreatedTime        = "Created time";
-        public static string pnCreatedBy          = "Created by"  ;
+        public  string pnCreatedTime        = "Created_time";
+        public  string pnCreatedBy          = "Created_by"  ;
 
-        public static string pnChangedTime        = "Changed time";
-        public static string pnChangedBy          = "Changed by"  ;
+        public  string pnChangedTime        = "Changed_time";
+        public  string pnChangedBy          = "Changed_by"  ;
 
 
-        public static string spTstGrpName         = "Timestamps_TEST_GROUP";
-        public static string spTstParName         = "Timestams_Data";
+        public  string spTstGrpName         = "Timestamps_TEST_GROUP";
+        public  string spTstParName         = "Timestams_Data";
 
-        public static Schema sch;
+        public  Schema sch;
         public static int elements_affected;
 
         // this set stores all the elements that the updater has edited to be used in the button nexecution context
-        public static HashSet<ElementId> eleIdsForTransfer = new HashSet<ElementId>();
-        public static HashSet<Category> eleIdsCats = new HashSet<Category>();
-        public TimeStampsModel(Document doc)
+        public HashSet<ElementId> eleIdsForTransfer = new HashSet<ElementId>();
+        private HashSet<Category> eleIdsCats = new HashSet<Category>();
+        
+
+        public TimeStampsModel(Document doc1)
         {
-            this.doc = doc;
+            this.doc = doc1;
         }
+
         // get the list of all unedited elements, reads the time infrom from entity and places in in the shared parameter folder
-        public static void SetElementInformation(Document doc)
+        public  void SetElementInformation(Document doc)
         {
             elements_affected = eleIdsForTransfer.Count;
             //loop through the list of elements
@@ -74,7 +77,21 @@ namespace BimExperts.Model
         {
             sch = createSchema(schemaGuid);
         }
-        private static Schema createSchema(string str)
+        private  Schema createSchema(string str)
+        {
+            using (Transaction transaction = new Transaction(doc))
+            {
+                transaction.Start("Schema creation");
+                Schema schema = SchemaCreationLogic(str);
+                
+                _ = transaction.Commit();
+                return schema;
+
+            }
+
+        }
+
+        private Schema SchemaCreationLogic(string str)
         {
             Guid schemaGuid = new Guid(str);
 
@@ -83,7 +100,8 @@ namespace BimExperts.Model
             //set read access
             schemaBuilder.SetReadAccessLevel(AccessLevel.Public);
             //set write Level
-            schemaBuilder.SetWriteAccessLevel(AccessLevel.Public);
+            schemaBuilder.SetWriteAccessLevel(AccessLevel.Vendor);
+            schemaBuilder.SetVendorId("BimExperts");
 
             //set Schema Name
             schemaBuilder.SetSchemaName(schemaName);
@@ -99,10 +117,10 @@ namespace BimExperts.Model
 
             //register the Schema
             Schema schema = schemaBuilder.Finish();
-
             return schema;
         }
-        internal static void getCategories(Document document)
+
+        internal  void getCategories(Document document)
         {
             foreach (ElementId id in eleIdsForTransfer)
             {
@@ -114,7 +132,7 @@ namespace BimExperts.Model
         //Create shared parameters
         //Group Test, 1 shared parameter test
         //Params Timestamp_Test_
-        internal static void SetUpProjectParams(UIApplication application)
+        internal  void SetUpProjectParams(UIApplication application)
         {
             DefinitionFile sharedParameterFile = application.Application.OpenSharedParameterFile();
             // create parametars on the elements that can store the time data
@@ -125,6 +143,7 @@ namespace BimExperts.Model
                 if (group.Name == spTstGrpName)
                 {
                     groupFound = false;
+
                     //create category set for parameter to bind to
                     CategorySet catSet = createCategorySet(application);
 
@@ -136,13 +155,32 @@ namespace BimExperts.Model
             }
             if (!groupFound)
             {
-                DefinitionGroup group =sharedParameterFile.Groups.Create(spTstGrpName);
-                CreateParameter(group);
+                createNewGroupAndParameter(application, sharedParameterFile);
+                return;
 
             }
 
         }
-        private static CategorySet createCategorySet(UIApplication application)
+
+        private  void createNewGroupAndParameter(UIApplication application, DefinitionFile sharedParameterFile)
+        {
+            // transaction
+            using (Transaction t = new Transaction(application.ActiveUIDocument.Document))
+            {
+                t.Start("Create Group and parameter");
+                DefinitionGroup group = CreateGroup(sharedParameterFile);
+                CreateParameter(group);
+                t.Commit();
+                return;
+            }
+        }
+
+        private  DefinitionGroup CreateGroup(DefinitionFile sharedParameterFile)
+        {
+           return sharedParameterFile.Groups.Create(spTstGrpName);
+        }
+
+        private  CategorySet createCategorySet(UIApplication application)
         {
             CategorySet catSet = application.Application.Create.NewCategorySet();
             foreach (Category cat in eleIdsCats)
@@ -152,7 +190,7 @@ namespace BimExperts.Model
 
             return catSet;
         }
-        private static void AddParam(DefinitionGroup group, UIApplication application, CategorySet catSet)
+        private  void AddParam(DefinitionGroup group, UIApplication application, CategorySet catSet)
         {
             // check for parameter and group existance existance,add if its not there
             ExternalDefinition extDef = group.Definitions.get_Item(spTstParName) as ExternalDefinition;
@@ -171,7 +209,42 @@ namespace BimExperts.Model
 
         }
 
-        private static void CreateParameter(DefinitionGroup group)
+        internal void SetUpUpdater()
+        {
+            // This part is for the updater
+            Guid guid = new Guid("e077f599-5c89-43cd-b550-986237c50b85");
+            TimeStampsDynamicUpdater tsdynUpdt = new TimeStampsDynamicUpdater(guid, this);
+            // registers the updater
+            UpdaterRegistry.RegisterUpdater(tsdynUpdt, true);
+
+            List<BuiltInCategory> builtInCategories = new List<BuiltInCategory>();
+
+            // i think these are all relevant
+            // could not find another way
+            builtInCategories.Add(BuiltInCategory.OST_Ceilings);
+            builtInCategories.Add(BuiltInCategory.OST_Conduit);
+            builtInCategories.Add(BuiltInCategory.OST_CurtainWallMullions);
+            builtInCategories.Add(BuiltInCategory.OST_Walls);
+            builtInCategories.Add(BuiltInCategory.OST_Floors);
+            builtInCategories.Add(BuiltInCategory.OST_DuctCurves);
+            builtInCategories.Add(BuiltInCategory.OST_PipeCurves);
+            builtInCategories.Add(BuiltInCategory.OST_Railings);
+            builtInCategories.Add(BuiltInCategory.OST_Roofs);
+            builtInCategories.Add(BuiltInCategory.OST_Stairs);
+            builtInCategories.Add(BuiltInCategory.OST_CableTray);
+
+            //Craete multicategory filter
+            ElementMulticategoryFilter mCatFilter = new ElementMulticategoryFilter(builtInCategories);
+            ElementFilter ifilter = new ElementClassFilter(typeof(FamilyInstance));
+
+            LogicalAndFilter filter = new LogicalAndFilter(mCatFilter, ifilter);
+
+            ChangeType change = ChangeType.ConcatenateChangeTypes(Element.GetChangeTypeAny(), Element.GetChangeTypeElementAddition());
+
+            UpdaterRegistry.AddTrigger(tsdynUpdt.GetUpdaterId(), filter, change);
+        }
+
+        private  void CreateParameter(DefinitionGroup group)
         {
             ExternalDefinitionCreationOptions opt = new ExternalDefinitionCreationOptions(spTstParName, ParameterType.Text);
             group.Definitions.Create(opt);
@@ -190,5 +263,8 @@ namespace BimExperts.Model
                 return;
             }
         }
+
+
+       
     }
 }
