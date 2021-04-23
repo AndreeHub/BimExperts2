@@ -61,13 +61,11 @@ namespace BimExperts.Model
 
                     Parameter para = ele.LookupParameter(spTstParName);
                     para.Set(StringBuilder);
-                   
-                   
+
                     
                     
-                    eleIdsForTransfer.Remove(id);
-                    TaskDialog.Show("Elemenets edited", " " + elements_affected.ToString());
                 }
+                eleIdsForTransfer.Clear();
                 trans.Commit();
                 
             
@@ -232,11 +230,6 @@ namespace BimExperts.Model
         }
         internal  void SetUpProjectParams(UIApplication application)
         {
-            //
-
-
-
-
             DefinitionFile sharedParameterFile = application.Application.OpenSharedParameterFile();
             // create parametars on the elements that can store the time data
             bool groupFound = false;

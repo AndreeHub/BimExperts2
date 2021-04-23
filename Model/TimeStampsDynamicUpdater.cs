@@ -108,6 +108,12 @@ namespace BimExperts.Model
                         entsy.Set(modeli.pnCreatedTime, ele.GetEntity(schemy).Get<string>(modeli.pnCreatedTime));
                         ele.SetEntity(entsy);
 
+                    
+                    
+                    
+                    
+                    
+                    
                     }
 
                 }
