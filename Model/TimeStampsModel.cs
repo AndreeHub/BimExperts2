@@ -11,67 +11,68 @@ namespace BimExperts.Model
 {
     class TimeStampsModel
     {
+        #region Vars
         //private UIDocument uidoc;
         private Autodesk.Revit.DB.Document doc;
+
+
+
+        private string schemaName = "Time_stamps_data";
+        private string schemaDocumentation = "Storage for time data";
+        private string schemaGuid = "8107fd14-c2cb-48e3-b079-dddbbea1caef";
+
+        public  string pnCreatedTime = "Created_time";
+        public  string pnCreatedBy = "Created_by";
+        public  string pnChangedTime = "Changed_time";
+        public  string pnChangedBy = "Changed_by";
+        public  string pnEditedByUser = "Edited_by_user";       
+        public  string spTstGrpName = "Timestamps_TEST_GROUP";
+        public  string spTstParName = "Timestams_Data";
+
         
-       
-
-        private  string schemaName          = "Time_stamps_data";
-        private  string schemaDocumentation = "Storage for time data";
-        private  string schemaGuid          = "8107fd14-c2cb-48e3-b079-dddbbea1caef";
-
-        public  string pnCreatedTime        = "Created_time";
-        public  string pnCreatedBy          = "Created_by"  ;
-
-        public  string pnChangedTime        = "Changed_time";
-        public  string pnChangedBy          = "Changed_by"  ;
-
-
-        public  string spTstGrpName         = "Timestamps_TEST_GROUP";
-        public  string spTstParName         = "Timestams_Data";
-
-        public  Schema sch;
+        public Schema sch;
         public static int elements_affected;
 
         // this set stores all the elements that the updater has edited to be used in the button nexecution context
         public HashSet<ElementId> eleIdsForTransfer = new HashSet<ElementId>();
-        private HashSet<Category> eleIdsCats = new HashSet<Category>();
-        
-
+        private HashSet<Category> eleIdsCats = new HashSet<Category>(); 
+        #endregion
         public TimeStampsModel(Document doc1)
         {
             this.doc = doc1;
         }
-
         // get the list of all unedited elements, reads the time infrom from entity and places in in the shared parameter folder
         public  void SetElementInformation(Document doc)
-        {
-            elements_affected = eleIdsForTransfer.Count;
-            //loop through the list of elements
-            foreach (ElementId id in eleIdsForTransfer)
+        {   // each transaction trigers a dynamic model updater call, so we need to be carefull when editing
+            using (Transaction trans = new Transaction(doc, "Trans1")) 
             {
-                Element ele = doc.GetElement(id);
-                String StringBuilder = "";
-                String createdTime = ele.GetEntity(sch).Get<String>(pnCreatedTime);
-                String changedTime = ele.GetEntity(sch).Get<String>(pnChangedTime);
-                StringBuilder = "Created: " + createdTime + " Changed: " + changedTime;
-
-                //place info into elements;
-                //In a transaction
-                using (Transaction trans = new Transaction(doc, "Trans1"))
-                {
-                    trans.Start();
-
-                    ele.LookupParameter(spTstParName).Set(StringBuilder);
-                    TaskDialog taskDialog = new TaskDialog("Element edite");
-                    // display the number of elements in the dialogue
-                   
-                    trans.Commit();
-                }
-                eleIdsForTransfer.Remove(id);
-                TaskDialog.Show("Elemenets edited", " " + elements_affected.ToString());
-            }
             
+                trans.Start();
+                elements_affected = eleIdsForTransfer.Count;
+                //loop through the list of elements
+                foreach (ElementId id in eleIdsForTransfer)
+                {
+                    Element ele = doc.GetElement(id);
+                    String StringBuilder = "";
+                    String createdTime = ele.GetEntity(sch).Get<String>(pnCreatedTime);
+                    String changedTime = ele.GetEntity(sch).Get<String>(pnChangedTime);
+                    StringBuilder = "Created: " + createdTime + " Changed: " + changedTime;
+
+
+                    Parameter para = ele.LookupParameter(spTstParName);
+                    para.Set(StringBuilder);
+                   
+                   
+                    
+                    
+                    eleIdsForTransfer.Remove(id);
+                    TaskDialog.Show("Elemenets edited", " " + elements_affected.ToString());
+                }
+                trans.Commit();
+                
+            
+            }
+
         }
         internal void CreateExtensibleStorage()
         {
@@ -90,7 +91,6 @@ namespace BimExperts.Model
             }
 
         }
-
         private Schema SchemaCreationLogic(string str)
         {
             Guid schemaGuid = new Guid(str);
@@ -114,12 +114,12 @@ namespace BimExperts.Model
             FieldBuilder fieldBuilder1 = schemaBuilder.AddSimpleField(pnCreatedBy, typeof(string));
             FieldBuilder fieldBuilder2 = schemaBuilder.AddSimpleField(pnChangedTime, typeof(string));
             FieldBuilder fieldBuilder3 = schemaBuilder.AddSimpleField(pnChangedBy, typeof(string));
+            FieldBuilder fieldBuilder4 = schemaBuilder.AddSimpleField(pnEditedByUser, typeof(bool));
 
             //register the Schema
             Schema schema = schemaBuilder.Finish();
             return schema;
         }
-
         internal  void getCategories(Document document)
         {
             foreach (ElementId id in eleIdsForTransfer)
@@ -132,54 +132,58 @@ namespace BimExperts.Model
         //Create shared parameters
         //Group Test, 1 shared parameter test
         //Params Timestamp_Test_
-        internal  void SetUpProjectParams(UIApplication application)
+        internal void SetUpUpdater()
         {
-            DefinitionFile sharedParameterFile = application.Application.OpenSharedParameterFile();
-            // create parametars on the elements that can store the time data
-            bool groupFound = false;
-            foreach (DefinitionGroup group in sharedParameterFile.Groups)
-            {
-                //find the group we are using, when you find it check for parameters
-                if (group.Name == spTstGrpName)
-                {
-                    groupFound = false;
+            // This part is for the updater
+            Guid guid = new Guid("e077f599-5c89-43cd-b550-986237c50b85");
+            TimeStampsDynamicUpdater tsdynUpdt = new TimeStampsDynamicUpdater(guid, this);
+            // registers the updater
+            UpdaterRegistry.RegisterUpdater(tsdynUpdt, true);
 
-                    //create category set for parameter to bind to
-                    CategorySet catSet = createCategorySet(application);
+            List<BuiltInCategory> builtInCategories = new List<BuiltInCategory>();
 
-                    //need to check for existance of parameters, if they dont exist add 
-                    AddParam(group, application, catSet);
+            // i think these are all relevant
+            // could not find another way
+            //builtInCategories.Add(BuiltInCategory.OST_Ceilings);
+            //builtInCategories.Add(BuiltInCategory.OST_Conduit);
+            //builtInCategories.Add(BuiltInCategory.OST_CurtainWallMullions);
+            builtInCategories.Add(BuiltInCategory.OST_Walls);
+            //builtInCategories.Add(BuiltInCategory.OST_Floors);
+            //builtInCategories.Add(BuiltInCategory.OST_DuctCurves);
+            //builtInCategories.Add(BuiltInCategory.OST_PipeCurves);
+            //builtInCategories.Add(BuiltInCategory.OST_Railings);
+            //builtInCategories.Add(BuiltInCategory.OST_Roofs);
+            //builtInCategories.Add(BuiltInCategory.OST_Stairs);
+            //builtInCategories.Add(BuiltInCategory.OST_CableTray);
 
-                    continue;
-                }
-            }
-            if (!groupFound)
-            {
-                createNewGroupAndParameter(application, sharedParameterFile);
-                return;
+            //Craete multicategory filter
+            ElementMulticategoryFilter mCatFilter = new ElementMulticategoryFilter(builtInCategories);
+            ElementFilter ifilter = new ElementClassFilter(typeof(FamilyInstance));
 
-            }
+            LogicalAndFilter filter = new LogicalAndFilter(mCatFilter, ifilter);
 
+            ElementFilter filtTest = new ElementCategoryFilter(BuiltInCategory.OST_Walls);
+
+            ChangeType change = ChangeType.ConcatenateChangeTypes(Element.GetChangeTypeAny(), Element.GetChangeTypeElementAddition());
+
+            UpdaterRegistry.AddTrigger(tsdynUpdt.GetUpdaterId(), filtTest, change);
         }
-
         private  void createNewGroupAndParameter(UIApplication application, DefinitionFile sharedParameterFile)
         {
             // transaction
             using (Transaction t = new Transaction(application.ActiveUIDocument.Document))
             {
                 t.Start("Create Group and parameter");
-                DefinitionGroup group = CreateGroup(sharedParameterFile);
+                DefinitionGroup group = sharedParameterFile.Groups.Create(spTstGrpName);
                 CreateParameter(group);
                 t.Commit();
                 return;
             }
         }
-
         private  DefinitionGroup CreateGroup(DefinitionFile sharedParameterFile)
         {
            return sharedParameterFile.Groups.Create(spTstGrpName);
         }
-
         private  CategorySet createCategorySet(UIApplication application)
         {
             CategorySet catSet = application.Application.Create.NewCategorySet();
@@ -208,49 +212,12 @@ namespace BimExperts.Model
 
 
         }
-
-        internal void SetUpUpdater()
-        {
-            // This part is for the updater
-            Guid guid = new Guid("e077f599-5c89-43cd-b550-986237c50b85");
-            TimeStampsDynamicUpdater tsdynUpdt = new TimeStampsDynamicUpdater(guid, this);
-            // registers the updater
-            UpdaterRegistry.RegisterUpdater(tsdynUpdt, true);
-
-            List<BuiltInCategory> builtInCategories = new List<BuiltInCategory>();
-
-            // i think these are all relevant
-            // could not find another way
-            builtInCategories.Add(BuiltInCategory.OST_Ceilings);
-            builtInCategories.Add(BuiltInCategory.OST_Conduit);
-            builtInCategories.Add(BuiltInCategory.OST_CurtainWallMullions);
-            builtInCategories.Add(BuiltInCategory.OST_Walls);
-            builtInCategories.Add(BuiltInCategory.OST_Floors);
-            builtInCategories.Add(BuiltInCategory.OST_DuctCurves);
-            builtInCategories.Add(BuiltInCategory.OST_PipeCurves);
-            builtInCategories.Add(BuiltInCategory.OST_Railings);
-            builtInCategories.Add(BuiltInCategory.OST_Roofs);
-            builtInCategories.Add(BuiltInCategory.OST_Stairs);
-            builtInCategories.Add(BuiltInCategory.OST_CableTray);
-
-            //Craete multicategory filter
-            ElementMulticategoryFilter mCatFilter = new ElementMulticategoryFilter(builtInCategories);
-            ElementFilter ifilter = new ElementClassFilter(typeof(FamilyInstance));
-
-            LogicalAndFilter filter = new LogicalAndFilter(mCatFilter, ifilter);
-
-            ChangeType change = ChangeType.ConcatenateChangeTypes(Element.GetChangeTypeAny(), Element.GetChangeTypeElementAddition());
-
-            UpdaterRegistry.AddTrigger(tsdynUpdt.GetUpdaterId(), filter, change);
-        }
-
         private  void CreateParameter(DefinitionGroup group)
         {
             ExternalDefinitionCreationOptions opt = new ExternalDefinitionCreationOptions(spTstParName, ParameterType.Text);
             group.Definitions.Create(opt);
             
         }
-
         private static void BindParameter(UIApplication application, CategorySet catSet, ExternalDefinition extDef)
         {
             using (Transaction t = new Transaction(application.ActiveUIDocument.Document))
@@ -262,6 +229,40 @@ namespace BimExperts.Model
                 t.Commit();
                 return;
             }
+        }
+        internal  void SetUpProjectParams(UIApplication application)
+        {
+            //
+
+
+
+
+            DefinitionFile sharedParameterFile = application.Application.OpenSharedParameterFile();
+            // create parametars on the elements that can store the time data
+            bool groupFound = false;
+            foreach (DefinitionGroup group in sharedParameterFile.Groups)
+            {
+                //find the group we are using, when you find it check for parameters
+                if (group.Name == spTstGrpName)
+                {
+                    groupFound = true;
+
+                    //create category set for parameter to bind to
+                    CategorySet catSet = createCategorySet(application);
+
+                    //need to check for existance of parameters, if they dont exist add 
+                    AddParam(group, application, catSet);
+
+                    break;
+                }
+            }
+            if (!groupFound)
+            {
+                createNewGroupAndParameter(application, sharedParameterFile);
+                return;
+
+            }
+
         }
 
 

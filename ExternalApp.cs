@@ -31,6 +31,9 @@ namespace BimExperts
         // Timestamps
         private ControlledApplication conApp;
 
+        
+       
+
         #endregion Vars
 
         #region InterfaceMethods
@@ -165,7 +168,7 @@ namespace BimExperts
         {
             Document doc = args.Document;
             //TaskDialog.Show("Hellothere", "We are in the event handler");
-            TimeStampsModel model = new TimeStampsModel(doc);
+            model = new TimeStampsModel(doc);
             //TaskDialog.Show("Hellothere", "Class was created");
             model.CreateExtensibleStorage();
             //TaskDialog.Show("Hellothere", "Extensible storage was created");
@@ -173,11 +176,10 @@ namespace BimExperts
            // TaskDialog.Show("hello again","The setup was executed");
 
         }
-
         public void RunCommand(ExternalCommandData commandData)
         {
-
-            model.getCategories(commandData.Application.ActiveUIDocument.Document);
+            Document doc = commandData.Application.ActiveUIDocument.Document;
+            model.getCategories(doc);
 
             model.SetUpProjectParams(commandData.Application);
 
