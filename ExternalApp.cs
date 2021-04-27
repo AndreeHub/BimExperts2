@@ -16,6 +16,7 @@ namespace BimExperts
         #region Vars
 
         internal static ExternalApp thisApp = null;
+        
         TimeStampsModel model = null;
          
        
@@ -31,8 +32,6 @@ namespace BimExperts
         // Timestamps
         private ControlledApplication conApp;
 
-        
-       
 
         #endregion Vars
 

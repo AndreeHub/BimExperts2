@@ -32,6 +32,11 @@ namespace BimExperts.Model
         
         public Schema sch;
         public static int elements_affected;
+        
+        // share param items
+        public DefinitionGroup paraGroup = null;
+        public ExternalDefinition extDef = null;
+        public bool parametarRequirementsProvided = false;
 
         // this set stores all the elements that the updater has edited to be used in the button nexecution context
         public HashSet<ElementId> eleIdsForTransfer = new HashSet<ElementId>();
@@ -172,8 +177,8 @@ namespace BimExperts.Model
             using (Transaction t = new Transaction(application.ActiveUIDocument.Document))
             {
                 t.Start("Create Group and parameter");
-                DefinitionGroup group = sharedParameterFile.Groups.Create(spTstGrpName);
-                CreateParameter(group);
+                paraGroup = sharedParameterFile.Groups.Create(spTstGrpName);
+                CreateParameter();
                 t.Commit();
                 return;
             }
@@ -192,8 +197,9 @@ namespace BimExperts.Model
 
             return catSet;
         }
-        private  void AddParam(DefinitionGroup group, UIApplication application, CategorySet catSet)
+        private  void AddParam(UIApplication application)
         {
+            CategorySet catSet = createCategorySet(application);
             // check for parameter and group existance existance,add if its not there
             ExternalDefinition extDef = group.Definitions.get_Item(spTstParName) as ExternalDefinition;
 
@@ -204,17 +210,16 @@ namespace BimExperts.Model
             }
             else
             {
-                CreateParameter(group);
+                CreateParameter();
                 BindParameter(application, catSet, extDef);
             }
 
 
         }
-        private  void CreateParameter(DefinitionGroup group)
+        private  void CreateParameter()
         {
             ExternalDefinitionCreationOptions opt = new ExternalDefinitionCreationOptions(spTstParName, ParameterType.Text);
-            group.Definitions.Create(opt);
-            
+            paraGroup.Definitions.Create(opt);
         }
         private static void BindParameter(UIApplication application, CategorySet catSet, ExternalDefinition extDef)
         {
@@ -230,7 +235,17 @@ namespace BimExperts.Model
         }
         internal  void SetUpProjectParams(UIApplication application)
         {
+
             DefinitionFile sharedParameterFile = application.Application.OpenSharedParameterFile();
+            getGroupAndPara(application,sharedParameterFile);
+
+            if (parametarRequirementsProvided)
+            {
+                AddParam();
+            }
+
+
+
             // create parametars on the elements that can store the time data
             bool groupFound = false;
             foreach (DefinitionGroup group in sharedParameterFile.Groups)
@@ -258,7 +273,49 @@ namespace BimExperts.Model
 
         }
 
+        void getGroupAndPara(UIApplication application, DefinitionFile sharedParameterFile)
+        {
 
-       
+           if (groupExists(sharedParameterFile))
+            {
+                if (parameterExists())
+                {
+                    parametarRequirementsProvided = true;
+                    return;
+                }
+                else
+                {
+                    CreateParameter();
+                    parametarRequirementsProvided = true;
+                    return;
+                }
+            }else
+            {
+                createNewGroupAndParameter(application,sharedParameterFile);
+            }
+
+        }
+        private bool parameterExists()
+        {
+            extDef = paraGroup.Definitions.get_Item(spTstParName) as ExternalDefinition;
+            if (extDef != null)
+            {
+                return true;
+            }
+            return false;
+        }
+        private bool groupExists(DefinitionFile sharedParameterFile)
+        {
+            foreach (DefinitionGroup group in sharedParameterFile.Groups)
+            {
+                //find the group we need
+                if (group.Name == spTstGrpName)
+                {
+                    paraGroup = group;
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
